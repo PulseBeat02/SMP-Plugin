@@ -57,7 +57,7 @@ public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
                 return true;
             }
             if (status.isCombat()) {
-                sender.sendMessage(plugin.formatMessage(ChatColor.RED + "You cannot execute this command while combat tagged!"));
+                sender.sendMessage(plugin.formatMessage(ChatColor.RED + "You cannot execute this command while combat tagged! (" + status.getCombatCooldown()/1200 + " seconds left)"));
                 return true;
             }
             switch (args[1]) {

@@ -52,7 +52,7 @@ public class PlayerListener implements Listener {
             attacked.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because you are in Peaceful Mode!"));
         } else {
             if (!whoStatus.isCombat()) {
-                who.sendMessage(plugin.formatMessage(ChatColor.RED + "You are currently combat tagged. This will last about 30 minutes before going away."));
+                who.sendMessage(plugin.formatMessage(ChatColor.RED + "You are currently Combat Tagged for attacking " + attacked.getName()));
                 plugin.getStatus().get(whoUuid).setCombat(true);
                 plugin.getStatus().get(whoUuid).setCombatCooldown(GlobalTime.COMBAT_TIMER.getTime());
             }
