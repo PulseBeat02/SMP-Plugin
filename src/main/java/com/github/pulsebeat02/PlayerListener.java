@@ -70,53 +70,44 @@ public class PlayerListener implements Listener {
         String deathMessage = "";
         switch (entity.getLastDamageCause().getCause()) {
             case DROWNING:
-                deathMessage = ChatColor.AQUA + pName + " drowned in Pepsi";
+                deathMessage = ChatColor.AQUA + pName + " drowned in " + ChatColor.BOLD + "Pepsi";
                 break;
             case ENTITY_ATTACK:
             case ENTITY_SWEEP_ATTACK:
-                deathMessage = ChatColor.RED + pName + " was smited into smithereens by " + kName;
-                break;
-            case PROJECTILE:
-                deathMessage = ChatColor.RED + pName + " was sniped by " + kName;
+                deathMessage = ChatColor.RED + pName + " was smited into " + ChatColor.BOLD +  "smithereens" + ChatColor.RESET + " " + ChatColor.RED + "by " + kName;
                 break;
             case SUFFOCATION:
-                deathMessage = ChatColor.RED + pName + " died from suffocation lol";
+                deathMessage = ChatColor.RED + pName + " died from " + ChatColor.BOLD + "suffocation" + ChatColor.RESET + " " + ChatColor.BOLD + "lol";
                 break;
             case FALL:
-                deathMessage = ChatColor.RED + pName + " fell from the sky to their death xd";
+                deathMessage = ChatColor.RED + pName + " fell from the sky to their death xd" + ChatColor.MAGIC + "kekw";
                 break;
             case FIRE:
             case FIRE_TICK:
-                deathMessage = ChatColor.RED + pName + " ate too many spicy chicken wings and burnt to a crisp";
+                deathMessage = ChatColor.RED + pName + " ate too many " + ChatColor.BOLD + "spicy chicken wings" + ChatColor.RESET + ChatColor.RED + " and burnt to a crisp";
                 break;
             case LAVA:
-                deathMessage = ChatColor.RED + pName + " fell into some laba";
+                deathMessage = ChatColor.RED + pName + " fell into some" + ChatColor.BOLD + " laba";
                 break;
             case BLOCK_EXPLOSION:
             case ENTITY_EXPLOSION:
-                deathMessage = ChatColor.RED + pName + " was blown up!!!!!!!!!!!!!!!";
+                deathMessage = ChatColor.RED + pName + " was blown up!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + ChatColor.AQUA + "!!!!!!!!!!!!!!!";
                 break;
             case VOID:
-                deathMessage = ChatColor.RED + pName + " committed Sudoku";
-                break;
-            case SUICIDE:
-                deathMessage = ChatColor.RED + pName + " just simply died for some odd reason";
-                break;
-            case STARVATION:
-                deathMessage = ChatColor.RED + pName + " died from starving. Give this dude some food cmon";
+                deathMessage = ChatColor.RED + pName + " committed " + ChatColor.BOLD + "Sudoku";
                 break;
             case POISON:
             case WITHER:
-                deathMessage = ChatColor.RED + pName + " died from the coronavirus. YIKES";
+                deathMessage = ChatColor.RED + pName + " died from the " + ChatColor.BOLD + "coronavirus" + ChatColor.RESET + ChatColor.RED + ". YIKES";
                 break;
             case MAGIC:
-                deathMessage = ChatColor.RED + pName + " was killed by Harry Potter";
+                deathMessage = ChatColor.RED + pName + " was killed by " + ChatColor.GOLD + ChatColor.BOLD + "Harry Potter";
                 break;
             case DRAGON_BREATH:
-                deathMessage = ChatColor.RED + pName + " died from the dragon's stanky breath";
+                deathMessage = ChatColor.RED + pName + " died from the dragon's " + ChatColor.BOLD + "stanky breath";
                 break;
             case FLY_INTO_WALL:
-                deathMessage = ChatColor.RED + pName + " doesn't know how to use an elytra";
+                deathMessage = ChatColor.RED + pName + " doesn't know how to use an " + ChatColor.BOLD + "elytra";
                 break;
         }
         event.setDeathMessage(deathMessage);
