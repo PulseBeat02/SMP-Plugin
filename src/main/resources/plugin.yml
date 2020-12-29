@@ -1,0 +1,19 @@
+main: com.github.pulsebeat02.SMPPlugin
+name: SMPPlugin
+version: 1.0.0
+description: Plugin for the SMP Server
+api-version: 1.16
+author: PulseBeat_02
+prefix: SMP Plugin
+commands:
+  status:
+    description: Sets your current status
+    permission: smp.status
+    usage: "/status set [peaceful | war]"
+permissions:
+  smp.status:
+    description: Allows the user to set the status
+    default: true
+  smp.*:
+    description: Allows access to all commands
+    default: op
