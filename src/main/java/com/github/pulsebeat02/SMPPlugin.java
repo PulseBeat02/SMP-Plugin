@@ -10,7 +10,6 @@ import org.bukkit.scoreboard.Team;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -18,14 +17,16 @@ public class SMPPlugin extends JavaPlugin {
 
     // true -> war
     // false -> peaceful
-    private final Map<UUID, PlayerStatus> status = new HashMap<>();
-    private final Logger logger = getLogger();
-    private FileConfiguration config = getConfig();
+    private Map<UUID, PlayerStatus> status;
+    private Logger logger;
+    private FileConfiguration config;
     private Team war;
     private Team peaceful;
 
     @Override
     public void onEnable() {
+        status = new HashMap<>();
+        logger = getLogger();
         logger.info(ChatColor.YELLOW + "SMP Plugin is Loading");
         long before = System.currentTimeMillis();
         if (!getDataFolder().exists() || config == null) {
@@ -36,7 +37,7 @@ public class SMPPlugin extends JavaPlugin {
         loadScoreboard();
         loadTimers();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-        Objects.requireNonNull(getCommand("status")).setExecutor(new CommandListener(this));
+        getCommand("status").setExecutor(new CommandListener(this));
         long after = System.currentTimeMillis();
         logger.info(ChatColor.YELLOW + "SMP Plugin has Loaded (Took " + (after - before) + " Milliseconds)");
     }
