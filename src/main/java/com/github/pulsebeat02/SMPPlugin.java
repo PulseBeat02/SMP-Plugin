@@ -37,7 +37,7 @@ public class SMPPlugin extends JavaPlugin {
         loadScoreboard();
         loadTimers();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-        getCommand("status").setExecutor(new CommandListener(this));
+        getCommand("status").setExecutor(new StatusCommandExecutor(this));
         long after = System.currentTimeMillis();
         logger.info(ChatColor.YELLOW + "SMP Plugin has Loaded (Took " + (after - before) + " Milliseconds)");
     }

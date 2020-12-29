@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class CommandListener implements CommandExecutor, TabCompleter {
+public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
 
     private final SMPPlugin plugin;
 
-    public CommandListener(final SMPPlugin plugin) {
+    public StatusCommandExecutor(final SMPPlugin plugin) {
         this.plugin = plugin;
     }
 
