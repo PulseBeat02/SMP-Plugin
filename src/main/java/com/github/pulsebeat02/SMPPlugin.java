@@ -33,7 +33,7 @@ public class SMPPlugin extends JavaPlugin {
         }
         config = getConfig();
         loadConfig();
-        // loadScoreboard();
+        loadScoreboard();
         loadTimers();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         Objects.requireNonNull(getCommand("status")).setExecutor(new CommandListener(this));
