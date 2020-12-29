@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
@@ -27,6 +28,7 @@ public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
             sender.sendMessage(plugin.formatMessage(ChatColor.RED + "You must be a Player to execute this command!"));
             return true;
         }
+        Map<UUID, PlayerStatus> pluginStatus = plugin.getStatus();
         if (sender instanceof ConsoleCommandSender) {
             if (args.length != 3 || !args[0].equalsIgnoreCase("set")) {
                 sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Invalid arguments. /status set [username] [minutes]"));
@@ -47,7 +49,7 @@ public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
         } else {
             Player pl = (Player) sender;
             UUID player = pl.getUniqueId();
-            PlayerStatus status = plugin.getStatus().get(player);
+            PlayerStatus status = pluginStatus.get(player);
             if (args.length == 0) {
                 sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Current Status: " + (status.isWar() ? "War" : "Peaceful")));
                 return true;
@@ -65,8 +67,8 @@ public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
                     if (status.isWar()) {
                         long time = status.getPeacefulCooldown();
                         if (time <= 0) {
-                            plugin.getStatus().get(player).setWar(false);
-                            plugin.getStatus().get(player).setPeacefulCooldown(GlobalTime.PEACEFUL_TO_WAR.getTime());
+                            pluginStatus.get(player).setWar(false);
+                            pluginStatus.get(player).setPeacefulCooldown(GlobalTime.PEACEFUL_TO_WAR.getTime());
                             plugin.getPeaceful().addEntry(pl.getName());
                             pl.sendMessage(plugin.formatMessage(ChatColor.GREEN + "Successfully switched to Peaceful Mode"));
                         } else {
@@ -80,8 +82,8 @@ public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
                     if (!status.isWar()) {
                         long time = status.getWarCooldown();
                         if (time <= 0) {
-                            plugin.getStatus().get(player).setWar(true);
-                            plugin.getStatus().get(player).setWarCooldown(GlobalTime.WAR_TO_PEACEFUL.getTime());
+                            pluginStatus.get(player).setWar(true);
+                            pluginStatus.get(player).setWarCooldown(GlobalTime.WAR_TO_PEACEFUL.getTime());
                             plugin.getWar().addEntry(pl.getName());
                             pl.sendMessage(plugin.formatMessage(ChatColor.GREEN + "Successfully switched to War Mode"));
                         } else {

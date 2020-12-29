@@ -1,16 +1,14 @@
 package com.github.pulsebeat02;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.Map;
 import java.util.UUID;
 
 public class PlayerListener implements Listener {
@@ -42,8 +40,9 @@ public class PlayerListener implements Listener {
         }
         UUID whoUuid = who.getUniqueId();
         UUID attackedUuid = attacked.getUniqueId();
-        PlayerStatus whoStatus = plugin.getStatus().get(whoUuid);
-        PlayerStatus attackedStatus = plugin.getStatus().get(attackedUuid);
+        Map<UUID, PlayerStatus> pluginStatus = plugin.getStatus();
+        PlayerStatus whoStatus = pluginStatus.get(whoUuid);
+        PlayerStatus attackedStatus = pluginStatus.get(attackedUuid);
         if (!attackedStatus.isWar()) {
             event.setCancelled(true);
             who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because they are in Peaceful Mode"));
@@ -53,8 +52,8 @@ public class PlayerListener implements Listener {
         } else {
             if (!whoStatus.isCombat()) {
                 who.sendMessage(plugin.formatMessage(ChatColor.RED + "You are currently Combat Tagged for attacking " + attacked.getName()));
-                plugin.getStatus().get(whoUuid).setCombat(true);
-                plugin.getStatus().get(whoUuid).setCombatCooldown(GlobalTime.COMBAT_TIMER.getTime());
+                pluginStatus.get(whoUuid).setCombat(true);
+                pluginStatus.get(whoUuid).setCombatCooldown(GlobalTime.COMBAT_TIMER.getTime());
             }
         }
     }
@@ -68,58 +67,59 @@ public class PlayerListener implements Listener {
             kName = killer.getDisplayName();
         }
         String pName = entity.getDisplayName();
+        String deathMessage = "";
         switch (entity.getLastDamageCause().getCause()) {
             case DROWNING:
-                event.setDeathMessage(ChatColor.AQUA + pName + " drowned in Pepsi");
+                deathMessage = ChatColor.AQUA + pName + " drowned in Pepsi";
                 break;
             case ENTITY_ATTACK:
             case ENTITY_SWEEP_ATTACK:
-                event.setDeathMessage(ChatColor.RED + pName + " was smited into smithereens by " + kName);
+                deathMessage = ChatColor.RED + pName + " was smited into smithereens by " + kName;
                 break;
             case PROJECTILE:
-                event.setDeathMessage(ChatColor.RED + pName + " was sniped by " + kName);
+                deathMessage = ChatColor.RED + pName + " was sniped by " + kName;
                 break;
             case SUFFOCATION:
-                event.setDeathMessage(ChatColor.RED + pName + " died from suffocation lol");
+                deathMessage = ChatColor.RED + pName + " died from suffocation lol";
                 break;
             case FALL:
-                event.setDeathMessage(ChatColor.RED + pName + " fell from the sky to their death xd");
+                deathMessage = ChatColor.RED + pName + " fell from the sky to their death xd";
                 break;
             case FIRE:
             case FIRE_TICK:
-                event.setDeathMessage(ChatColor.RED + pName + " ate too many spicy chicken wings and burnt to a crisp");
+                deathMessage = ChatColor.RED + pName + " ate too many spicy chicken wings and burnt to a crisp";
                 break;
             case LAVA:
-                event.setDeathMessage(ChatColor.RED + pName + " fell into some laba");
+                deathMessage = ChatColor.RED + pName + " fell into some laba";
                 break;
             case BLOCK_EXPLOSION:
             case ENTITY_EXPLOSION:
-                event.setDeathMessage(ChatColor.RED + pName + " was blown up!!!!!!!!!!!!!!!");
+                deathMessage = ChatColor.RED + pName + " was blown up!!!!!!!!!!!!!!!";
                 break;
             case VOID:
-                event.setDeathMessage(ChatColor.RED + pName + " committed Sudoku");
+                deathMessage = ChatColor.RED + pName + " committed Sudoku";
                 break;
             case SUICIDE:
-                event.setDeathMessage(ChatColor.RED + pName + " just simply died for some odd reason");
+                deathMessage = ChatColor.RED + pName + " just simply died for some odd reason";
                 break;
             case STARVATION:
-                event.setDeathMessage(ChatColor.RED + pName + " died from starving. Give this dude some food cmon");
+                deathMessage = ChatColor.RED + pName + " died from starving. Give this dude some food cmon";
                 break;
             case POISON:
             case WITHER:
-                event.setDeathMessage(ChatColor.RED + pName + " died from the coronavirus. YIKES");
+                deathMessage = ChatColor.RED + pName + " died from the coronavirus. YIKES";
                 break;
             case MAGIC:
-                event.setDeathMessage(ChatColor.RED + pName + " was killed by Harry Potter");
+                deathMessage = ChatColor.RED + pName + " was killed by Harry Potter";
                 break;
             case DRAGON_BREATH:
-                event.setDeathMessage(ChatColor.RED + pName + " died from the dragon's stanky breath");
+                deathMessage = ChatColor.RED + pName + " died from the dragon's stanky breath";
                 break;
             case FLY_INTO_WALL:
-                event.setDeathMessage(ChatColor.RED + pName + " doesn't know how to use an elytra");
+                deathMessage = ChatColor.RED + pName + " doesn't know how to use an elytra";
                 break;
         }
-
+        event.setDeathMessage(deathMessage);
     }
 
 }

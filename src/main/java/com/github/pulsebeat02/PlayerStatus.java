@@ -19,45 +19,40 @@ public class PlayerStatus {
         return war;
     }
 
-    public PlayerStatus setWar(final boolean war) {
+    public void setWar(final boolean war) {
         this.war = war;
-        return this;
     }
 
     public boolean isCombat() {
         return combat;
     }
 
-    public PlayerStatus setCombat(boolean combat) {
+    public void setCombat(boolean combat) {
         this.combat = combat;
-        return this;
     }
 
     public long getPeacefulCooldown() {
         return peacefulCooldown;
     }
 
-    public PlayerStatus setPeacefulCooldown(final long peacefulCooldown) {
+    public void setPeacefulCooldown(final long peacefulCooldown) {
         this.peacefulCooldown = peacefulCooldown;
-        return this;
     }
 
     public long getWarCooldown() {
         return warCooldown;
     }
 
-    public PlayerStatus setWarCooldown(final long warCooldown) {
+    public void setWarCooldown(final long warCooldown) {
         this.warCooldown = warCooldown;
-        return this;
     }
 
     public long getCombatCooldown() {
         return combatCooldown;
     }
 
-    public PlayerStatus setCombatCooldown(long combatCooldown) {
+    public void setCombatCooldown(long combatCooldown) {
         this.combatCooldown = combatCooldown;
-        return this;
     }
 
 }

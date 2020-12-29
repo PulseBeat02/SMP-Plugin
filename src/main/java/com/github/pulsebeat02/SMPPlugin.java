@@ -70,7 +70,7 @@ public class SMPPlugin extends JavaPlugin {
     }
 
     public void loadTimers() {
-        Bukkit.getServer().getScheduler().scheduleAsyncRepeatingTask(this, () -> {
+        Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             for (PlayerStatus status : status.values()) {
                 status.setWarCooldown(status.getWarCooldown() - 20);
                 status.setPeacefulCooldown(status.getPeacefulCooldown() - 20);
