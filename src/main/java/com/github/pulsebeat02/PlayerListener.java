@@ -46,10 +46,10 @@ public class PlayerListener implements Listener {
         PlayerStatus attackedStatus = plugin.getStatus().get(attackedUuid);
         if (!attackedStatus.isWar()) {
             event.setCancelled(true);
-            who.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because they are in Peaceful Mode");
+            who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because they are in Peaceful Mode"));
         } else if (!whoStatus.isWar()) {
             event.setCancelled(true);
-            attacked.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because you are in Peaceful Mode!");
+            attacked.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because you are in Peaceful Mode!"));
         } else {
             if (!whoStatus.isCombat()) {
                 plugin.getStatus().get(whoUuid).setCombat(true);

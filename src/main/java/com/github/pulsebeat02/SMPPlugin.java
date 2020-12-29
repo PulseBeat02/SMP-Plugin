@@ -102,4 +102,8 @@ public class SMPPlugin extends JavaPlugin {
         }
     }
 
+    public String formatMessage(String message) {
+        return ChatColor.GOLD + "" + ChatColor.BOLD + "[SMP]" + ChatColor.GOLD + " " + message;
+    }
+
 }

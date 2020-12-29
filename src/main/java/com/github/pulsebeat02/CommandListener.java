@@ -22,26 +22,26 @@ public class CommandListener implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String s, final String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "[SMP] You must be a Player to execute this command!");
+            sender.sendMessage(plugin.formatMessage(ChatColor.RED + "You must be a Player to execute this command!"));
             return true;
         }
         Player pl = (Player) sender;
         UUID player = pl.getUniqueId();
         PlayerStatus status = plugin.getStatus().get(player);
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.GOLD + "[SMP] Current Status: " + (status.isWar() ? "War" : "Peaceful"));
+            sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Current Status: " + (status.isWar() ? "War" : "Peaceful")));
             return true;
         }
         if (args.length != 2) {
-            sender.sendMessage(ChatColor.RED + "Invalid arguments. /status set [peaceful | war]");
+            sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Invalid arguments. /status set [peaceful | war]"));
             return true;
         }
         if (!args[0].equalsIgnoreCase("set")) {
-            sender.sendMessage(ChatColor.RED + "Invalid arguments. /status set [mode]");
+            sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Invalid arguments. /status set [mode]"));
             return true;
         }
         if (status.isCombat()) {
-            sender.sendMessage(ChatColor.RED + "You cannot execute this command while combat tagged!");
+            sender.sendMessage(plugin.formatMessage(ChatColor.RED + "You cannot execute this command while combat tagged!"));
             return true;
         }
         switch (args[1]) {
@@ -52,12 +52,12 @@ public class CommandListener implements CommandExecutor, TabCompleter {
                         plugin.getStatus().get(player).setWar(false);
                         plugin.getStatus().get(player).setPeacefulCooldown(GlobalTime.PEACEFUL_TO_WAR.getTime());
                         plugin.getPeaceful().addEntry(pl.getName());
-                        pl.sendMessage(ChatColor.GREEN + "Successfully switched to Peaceful Mode");
+                        pl.sendMessage(plugin.formatMessage(ChatColor.GREEN + "Successfully switched to Peaceful Mode"));
                     } else {
-                        pl.sendMessage(ChatColor.RED + "You still have " + time/1200 + " seconds before switching");
+                        pl.sendMessage(plugin.formatMessage(ChatColor.RED + "You still have " + time/1200 + " seconds before switching"));
                     }
                 } else {
-                    pl.sendMessage(ChatColor.GOLD + "You are Already in Peaceful Mode!");
+                    pl.sendMessage(plugin.formatMessage(ChatColor.GOLD + "You are Already in Peaceful Mode!"));
                 }
                 break;
             case "war":
@@ -67,16 +67,16 @@ public class CommandListener implements CommandExecutor, TabCompleter {
                         plugin.getStatus().get(player).setWar(true);
                         plugin.getStatus().get(player).setWarCooldown(GlobalTime.WAR_TO_PEACEFUL.getTime());
                         plugin.getWar().addEntry(pl.getName());
-                        pl.sendMessage(ChatColor.GREEN + "Successfully switched to War Mode");
+                        pl.sendMessage(plugin.formatMessage(ChatColor.GREEN + "Successfully switched to War Mode"));
                     } else {
-                        pl.sendMessage(ChatColor.RED + "You still have " + time/1200 + " seconds before switching");
+                        pl.sendMessage(plugin.formatMessage(ChatColor.RED + "You still have " + time/1200 + " seconds before switching"));
                     }
                 } else {
-                    pl.sendMessage(ChatColor.GOLD + "You are Already in War Mode!");
+                    pl.sendMessage(plugin.formatMessage(ChatColor.GOLD + "You are Already in War Mode!"));
                 }
                 break;
             default:
-                pl.sendMessage(ChatColor.RED + "Bruh that isn't a valid argument.");
+                pl.sendMessage(plugin.formatMessage(ChatColor.RED + "Bruh that isn't a valid argument"));
                 break;
         }
         return true;
