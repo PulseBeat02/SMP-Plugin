@@ -59,4 +59,5 @@ public class PlayerStatus {
         this.combatCooldown = combatCooldown;
         return this;
     }
+
 }

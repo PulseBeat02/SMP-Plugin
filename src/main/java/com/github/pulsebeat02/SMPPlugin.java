@@ -44,6 +44,7 @@ public class SMPPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        logger.info(ChatColor.YELLOW + "SMP Plugin is Shutting Down...");
         writeConfig();
     }
 
@@ -51,37 +52,12 @@ public class SMPPlugin extends JavaPlugin {
 
     public Map<UUID, PlayerStatus> getStatus() { return status; }
 
-    @Override
-    public Logger getLogger() {
-        return logger;
-    }
-
-    @Override
-    public FileConfiguration getConfig() {
-        return config;
-    }
-
-    public SMPPlugin setConfig(FileConfiguration config) {
-        this.config = config;
-        return this;
-    }
-
     public Team getWar() {
         return war;
     }
 
-    public SMPPlugin setWar(Team war) {
-        this.war = war;
-        return this;
-    }
-
     public Team getPeaceful() {
         return peaceful;
-    }
-
-    public SMPPlugin setPeaceful(Team peaceful) {
-        this.peaceful = peaceful;
-        return this;
     }
 
     public void loadScoreboard() {
