@@ -23,7 +23,7 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
         if (!plugin.containsPlayer(uuid)) {
-            plugin.getStatus().put(uuid, new PlayerStatus( false, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime()));
+            plugin.getStatus().put(uuid, new PlayerStatus( false, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime(), false, 0));
             plugin.getPeaceful().addEntry(event.getPlayer().getName());
         }
     }

@@ -8,11 +8,12 @@ public class PlayerStatus {
     private long warCooldown;       // ticks to switch to war
     private long combatCooldown;
 
-    public PlayerStatus(final boolean war, final long peacefulCooldown, final long warCooldown) {
+    public PlayerStatus(final boolean war, final long peacefulCooldown, final long warCooldown, final boolean combat, final long combatCooldown) {
         this.war = war;
         this.peacefulCooldown = peacefulCooldown;
         this.warCooldown = warCooldown;
-        this.combatCooldown = 0;
+        this.combat = combat;
+        this.combatCooldown = combatCooldown;
     }
 
     public boolean isWar() {
