@@ -6,7 +6,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -15,12 +17,14 @@ public class SMPPlugin extends JavaPlugin {
     // true -> war
     // false -> peaceful
     private Map<UUID, PlayerStatus> status;
+    private Set<UUID> deathMessages;
     private Logger logger;
     private FileConfiguration config;
 
     @Override
     public void onEnable() {
         status = new HashMap<>();
+        deathMessages = new HashSet<>();
         logger = getLogger();
         logger.info(ChatColor.YELLOW + "SMP Plugin is Loading");
         long before = System.currentTimeMillis();
@@ -32,6 +36,7 @@ public class SMPPlugin extends JavaPlugin {
         loadTimers();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getCommand("status").setExecutor(new StatusCommandExecutor(this));
+        getCommand("customdeathmessages ").setExecutor(new CustomDeathMessageExecutor(this));
         long after = System.currentTimeMillis();
         logger.info(ChatColor.YELLOW + "SMP Plugin has Loaded (Took " + (after - before) + " Milliseconds)");
     }
@@ -50,6 +55,8 @@ public class SMPPlugin extends JavaPlugin {
 
     public Map<UUID, PlayerStatus> getStatus() { return status; }
 
+    public Set<UUID> getDeathMessages() { return deathMessages; }
+
     public void loadTimers() {
         Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             for (PlayerStatus status : status.values()) {
@@ -66,12 +73,14 @@ public class SMPPlugin extends JavaPlugin {
 
     public void loadConfig() {
         for (String uuid : getConfig().getKeys(false)) {
-            boolean atWar = config.getBoolean(uuid + ".status");
-            long peacefulcd = config.getLong(uuid + ".peacefulCooldown");
-            long warcd = config.getLong(uuid + ".warCooldown");
-            boolean combat = config.getBoolean(uuid + ".combat");
-            long combatcd = config.getLong(uuid + ".combatCooldown");
-            System.out.println(uuid);
+            boolean atWar = config.getBoolean(uuid + ".Status");
+            long peacefulcd = config.getLong(uuid + ".PeacefulCooldown");
+            long warcd = config.getLong(uuid + ".WarCooldown");
+            boolean combat = config.getBoolean(uuid + ".Combat");
+            long combatcd = config.getLong(uuid + ".CombatCooldown");
+            if (config.getBoolean(uuid + ".CustomDeathMessages")) {
+                deathMessages.add(UUID.fromString(uuid));
+            }
             status.put(UUID.fromString(uuid), new PlayerStatus(atWar, peacefulcd, warcd, combat, combatcd));
         }
     }
@@ -80,11 +89,12 @@ public class SMPPlugin extends JavaPlugin {
         for (Map.Entry<UUID, PlayerStatus> entry : status.entrySet()) {
             String key = entry.getKey().toString();
             PlayerStatus stat = entry.getValue();
-            config.set(key + ".status", stat.isWar());
-            config.set(key + ".peacefulCooldown", stat.getPeacefulCooldown());
-            config.set(key + ".warCooldown", stat.getWarCooldown());
-            config.set(key + ".combat", stat.isCombat());
-            config.set(key + ".combatCooldown", stat.getCombatCooldown());
+            config.set(key + ".Status", stat.isWar());
+            config.set(key + ".PeacefulCooldown", stat.getPeacefulCooldown());
+            config.set(key + ".WarCooldown", stat.getWarCooldown());
+            config.set(key + ".Combat", stat.isCombat());
+            config.set(key + ".CombatCooldown", stat.getCombatCooldown());
+            config.set(key + ".CustomDeathMessages", deathMessages.contains(entry.getKey()));
         }
     }
 

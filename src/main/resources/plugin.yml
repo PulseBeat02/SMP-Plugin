@@ -10,9 +10,16 @@ commands:
     description: Sets your current status
     permission: smp.status
     usage: "/status set [peaceful | war]"
+  customdeathmessages:
+    description: Sets custom death messages
+    permission: smp.customdeathmessages
+    usage: "/customdeathmessages [true | false]"
 permissions:
   smp.status:
     description: Allows the user to set the status
+    default: true
+  smp.customdeathmessages:
+    description: Allows the user to set their custom death message
     default: true
   smp.*:
     description: Allows access to all commands
