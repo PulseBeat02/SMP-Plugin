@@ -35,8 +35,12 @@ public class SMPPlugin extends JavaPlugin {
         loadConfig();
         loadTimers();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-        getCommand("status").setExecutor(new StatusCommandExecutor(this));
-        getCommand("customdeathmessages ").setExecutor(new CustomDeathMessageExecutor(this));
+        StatusCommandExecutor statusCommandExecutor = new StatusCommandExecutor(this);
+        CustomDeathMessageExecutor customDeathMessageExecutor = new CustomDeathMessageExecutor(this);
+        getCommand("status").setExecutor(statusCommandExecutor);
+        getCommand("status").setTabCompleter(statusCommandExecutor);
+        getCommand("customdeathmessages").setExecutor(customDeathMessageExecutor);
+        getCommand("customdeathmessages").setTabCompleter(customDeathMessageExecutor);
         long after = System.currentTimeMillis();
         logger.info(ChatColor.YELLOW + "SMP Plugin has Loaded (Took " + (after - before) + " Milliseconds)");
     }

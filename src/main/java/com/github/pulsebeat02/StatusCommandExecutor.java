@@ -66,7 +66,7 @@ public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
                         if (time <= 0) {
                             pluginStatus.get(player).setWar(false);
                             pluginStatus.get(player).setPeacefulCooldown(GlobalTime.PEACEFUL_TO_WAR.getTime());
-                            pl.setDisplayName(pl.getDisplayName() + ChatColor.BOLD + " " + ChatColor.AQUA + "[Peaceful]");
+                            pl.setDisplayName(pl.getName() + ChatColor.BOLD + " " + ChatColor.AQUA + "[Peaceful]");
                             pl.sendMessage(plugin.formatMessage(ChatColor.GREEN + "Successfully switched to Peaceful Mode"));
                         } else {
                             pl.sendMessage(plugin.formatMessage(ChatColor.RED + "You still have " + (time / 1200 + 1) + " seconds before switching"));
@@ -81,7 +81,7 @@ public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
                         if (time <= 0) {
                             pluginStatus.get(player).setWar(true);
                             pluginStatus.get(player).setWarCooldown(GlobalTime.WAR_TO_PEACEFUL.getTime());
-                            pl.setDisplayName(pl.getDisplayName() + ChatColor.BOLD + " " + ChatColor.RED + "[War]");
+                            pl.setDisplayName(pl.getName() + ChatColor.BOLD + " " + ChatColor.RED + "[War]");
                             pl.sendMessage(plugin.formatMessage(ChatColor.GREEN + "Successfully switched to War Mode"));
                         } else {
                             pl.sendMessage(plugin.formatMessage(ChatColor.RED + "You still have " + (time / 1200 + 1) + " seconds before switching"));

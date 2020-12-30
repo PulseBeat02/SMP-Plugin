@@ -20,16 +20,25 @@ public class CustomDeathMessageExecutor implements CommandExecutor, TabCompleter
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String s, final String[] args) {
         if (!(sender instanceof Player)) {
-            plugin.formatMessage(ChatColor.RED + "You must be a Player to execute this command.");
+            sender.sendMessage(plugin.formatMessage(ChatColor.RED + "You must be a Player to execute this command."));
             return true;
         }
-        Player player = (Player) sender;
-        try {
-            if (Boolean.parseBoolean(args[1])) {
-                plugin.getDeathMessages().add(player.getUniqueId());
+        if (args.length == 1) {
+            Player player = (Player) sender;
+            try {
+                if (Boolean.parseBoolean(args[0])) {
+                    plugin.getDeathMessages().add(player.getUniqueId());
+                    player.sendMessage(plugin.formatMessage("Allowed Custom Death Messages"));
+                } else {
+                    plugin.getDeathMessages().remove(player.getUniqueId());
+                    player.sendMessage(plugin.formatMessage("Disallowed Custom Death Messages"));
+                }
+            } catch (NumberFormatException e) {
+                player.sendMessage(plugin.formatMessage("Invalid Value. /customdeathmessages set [true | false]"));
+                return true;
             }
-        } catch (NumberFormatException e) {
-            player.sendMessage("Invalid Value. /customdeathmessages set [true | false]");
+        } else {
+            sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Wrong Use: /customdeathmessages set [true | false]"));
             return true;
         }
         return true;

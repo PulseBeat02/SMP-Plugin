@@ -25,7 +25,7 @@ public class PlayerListener implements Listener {
         UUID uuid = player.getUniqueId();
         if (!plugin.containsPlayer(uuid)) {
             plugin.getStatus().put(uuid, new PlayerStatus( false, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime(), false, 0));
-            player.setDisplayName(player.getDisplayName() + ChatColor.BOLD + " " + ChatColor.AQUA + "[Peaceful]");
+            player.setDisplayName(player.getName() + ChatColor.BOLD + " " + ChatColor.AQUA + "[Peaceful]");
         }
     }
 
