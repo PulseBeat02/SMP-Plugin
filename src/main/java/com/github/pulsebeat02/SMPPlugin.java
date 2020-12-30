@@ -68,8 +68,8 @@ public class SMPPlugin extends JavaPlugin {
 
     public void loadTimers() {
         Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, this::decrementTimers, 20L,20L);
-        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, this::writeConfig, 20L * 15L * 60L, 20L);
-        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, this::rulesAnnouncement, 20L * 120L * 60L, 20L);
+        Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, this::writeConfig, 20L, 20L * 15L * 60L);
+        Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, this::rulesAnnouncement, 20L, 20L * 180L * 60L);
     }
 
     public void rulesAnnouncement() {
