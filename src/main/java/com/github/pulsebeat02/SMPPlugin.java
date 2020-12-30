@@ -1,8 +1,13 @@
 package com.github.pulsebeat02;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -62,17 +67,29 @@ public class SMPPlugin extends JavaPlugin {
     public Set<UUID> getDeathMessages() { return deathMessages; }
 
     public void loadTimers() {
-        Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
-            for (PlayerStatus status : status.values()) {
-                status.setWarCooldown(status.getWarCooldown() - 20);
-                status.setPeacefulCooldown(status.getPeacefulCooldown() - 20);
-                status.setCombatCooldown(status.getCombatCooldown() - 20);
-                if (status.getCombatCooldown() <= 0) {
-                    status.setCombat(false);
-                }
+        Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, this::decrementTimers, 20L,20L);
+        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, this::writeConfig, 20L * 15L * 60L, 20L);
+        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, this::rulesAnnouncement, 20L * 120L * 60L, 20L);
+    }
+
+    public void rulesAnnouncement() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            TextComponent message = new TextComponent(formatMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Click On Me for the Rules of this SMP"));
+            message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,"https://github.com/PulseBeat02/SMP-Rules/blob/main/RULES.md"));
+            message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to Visit the Rules")));
+            p.spigot().sendMessage(message);
+        }
+    }
+
+    public void decrementTimers() {
+        for (PlayerStatus status : status.values()) {
+            status.setWarCooldown(status.getWarCooldown() - 20);
+            status.setPeacefulCooldown(status.getPeacefulCooldown() - 20);
+            status.setCombatCooldown(status.getCombatCooldown() - 20);
+            if (status.getCombatCooldown() <= 0) {
+                status.setCombat(false);
             }
-        }, 20L,0L);
-        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, this::writeConfig, 20L * 15L * 60L, 10L);
+        }
     }
 
     public void loadConfig() {
