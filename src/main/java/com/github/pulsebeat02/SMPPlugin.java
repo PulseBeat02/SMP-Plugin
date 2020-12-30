@@ -4,9 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.scoreboard.Team;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +17,6 @@ public class SMPPlugin extends JavaPlugin {
     private Map<UUID, PlayerStatus> status;
     private Logger logger;
     private FileConfiguration config;
-    private Team war;
-    private Team peaceful;
 
     @Override
     public void onEnable() {
@@ -34,7 +29,6 @@ public class SMPPlugin extends JavaPlugin {
         }
         config = getConfig();
         loadConfig();
-        loadScoreboard();
         loadTimers();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getCommand("status").setExecutor(new StatusCommandExecutor(this));
@@ -55,23 +49,6 @@ public class SMPPlugin extends JavaPlugin {
     public boolean containsPlayer(final UUID player) { return status.containsKey(player); }
 
     public Map<UUID, PlayerStatus> getStatus() { return status; }
-
-    public Team getWar() {
-        return war;
-    }
-
-    public Team getPeaceful() {
-        return peaceful;
-    }
-
-    public void loadScoreboard() {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard board = manager.getNewScoreboard();
-        war = board.registerNewTeam("war");
-        war.setSuffix(ChatColor.RED + "[War]");
-        peaceful = board.registerNewTeam("peaceful");
-        peaceful.setSuffix(ChatColor.AQUA + "[Peaceful]");
-    }
 
     public void loadTimers() {
         Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {

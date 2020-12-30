@@ -21,10 +21,11 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent event) {
-        UUID uuid = event.getPlayer().getUniqueId();
+        Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
         if (!plugin.containsPlayer(uuid)) {
             plugin.getStatus().put(uuid, new PlayerStatus( false, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime(), false, 0));
-            plugin.getPeaceful().addEntry(event.getPlayer().getName());
+            player.setDisplayName(player.getDisplayName() + ChatColor.BOLD + " " + ChatColor.AQUA + "[Peaceful]");
         }
     }
 

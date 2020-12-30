@@ -58,6 +58,7 @@ public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
                 sender.sendMessage(plugin.formatMessage(ChatColor.RED + "You cannot execute this command while combat tagged! (" + status.getCombatCooldown()/1200 + " seconds left)"));
                 return true;
             }
+            String name = pl.getName();
             switch (args[1]) {
                 case "peaceful":
                     if (status.isWar()) {
@@ -65,7 +66,7 @@ public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
                         if (time <= 0) {
                             pluginStatus.get(player).setWar(false);
                             pluginStatus.get(player).setPeacefulCooldown(GlobalTime.PEACEFUL_TO_WAR.getTime());
-                            plugin.getPeaceful().addEntry(pl.getName());
+                            pl.setDisplayName(pl.getDisplayName() + ChatColor.BOLD + " " + ChatColor.AQUA + "[Peaceful]");
                             pl.sendMessage(plugin.formatMessage(ChatColor.GREEN + "Successfully switched to Peaceful Mode"));
                         } else {
                             pl.sendMessage(plugin.formatMessage(ChatColor.RED + "You still have " + (time / 1200 + 1) + " seconds before switching"));
@@ -80,7 +81,7 @@ public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
                         if (time <= 0) {
                             pluginStatus.get(player).setWar(true);
                             pluginStatus.get(player).setWarCooldown(GlobalTime.WAR_TO_PEACEFUL.getTime());
-                            plugin.getWar().addEntry(pl.getName());
+                            pl.setDisplayName(pl.getDisplayName() + ChatColor.BOLD + " " + ChatColor.RED + "[War]");
                             pl.sendMessage(plugin.formatMessage(ChatColor.GREEN + "Successfully switched to War Mode"));
                         } else {
                             pl.sendMessage(plugin.formatMessage(ChatColor.RED + "You still have " + (time / 1200 + 1) + " seconds before switching"));
