@@ -28,8 +28,8 @@ public class PlayerModeSelectionGui implements Listener {
         this.plugin = plugin;
         this.who = who;
         this.inv = Bukkit.createInventory(null, 27, "Choose Mode");
-        inv.setItem(11, getPeacefulStack());
-        inv.setItem(13, getWarStack());
+        inv.setItem(12, getPeacefulStack());
+        inv.setItem(14, getWarStack());
         for (int i = 0; i < inv.getSize(); i++) {
             if (inv.getItem(i) == null) {
                 inv.setItem(i, getNormalStack());
@@ -81,13 +81,13 @@ public class PlayerModeSelectionGui implements Listener {
         }
         event.setCancelled(true);
         switch (event.getSlot()) {
-            case 13:
+            case 12:
                 plugin.getStatus().put(uuid, new PlayerStatus( false, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime(), false, 0));
                 entity.closeInventory();
                 entity.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Set your status to " + ChatColor.GREEN + "Peaceful"));
                 event.getHandlers().unregister(this);
                 break;
-            case 15:
+            case 14:
                 plugin.getStatus().put(uuid, new PlayerStatus( true, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime(), false, 0));
                 entity.closeInventory();
                 entity.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Set your status to " + ChatColor.RED + "War"));
