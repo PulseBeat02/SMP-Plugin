@@ -35,7 +35,7 @@ public class PlayerListener implements Listener {
         }
         Player who = (Player) event.getDamager();
         Player attacked = (Player) event.getEntity();
-        if (event.getDamage() <= 1) {
+        if (event.getDamage() <= 1.5) {
             return;
         }
         UUID whoUuid = who.getUniqueId();
@@ -48,7 +48,7 @@ public class PlayerListener implements Listener {
             who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because they are in Peaceful Mode"));
         } else if (!whoStatus.isWar()) {
             event.setCancelled(true);
-            attacked.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because you are in Peaceful Mode!"));
+            attacked.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "They cannot attack you because you are in Peaceful Mode!"));
         } else {
             if (!whoStatus.isCombat()) {
                 who.sendMessage(plugin.formatMessage(ChatColor.RED + "You are currently Combat Tagged for attacking " + attacked.getName()));
@@ -65,6 +65,8 @@ public class PlayerListener implements Listener {
         String kName = null;
         if (killer != null) {
             kName = killer.getDisplayName();
+        } else {
+            return;
         }
         String pName = entity.getDisplayName();
         String deathMessage = "";
@@ -80,7 +82,7 @@ public class PlayerListener implements Listener {
                 deathMessage = ChatColor.RED + pName + " died from " + ChatColor.BOLD + "suffocation" + ChatColor.RESET + " " + ChatColor.BOLD + "lol";
                 break;
             case FALL:
-                deathMessage = ChatColor.RED + pName + " fell from the sky to their death xd" + ChatColor.MAGIC + "kekw";
+                deathMessage = ChatColor.RED + pName + " fell from the sky to their death xd" + ChatColor.MAGIC + " kekw";
                 break;
             case FIRE:
             case FIRE_TICK:

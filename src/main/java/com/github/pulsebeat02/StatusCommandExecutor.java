@@ -24,10 +24,6 @@ public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String s, final String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(plugin.formatMessage(ChatColor.RED + "You must be a Player to execute this command!"));
-            return true;
-        }
         Map<UUID, PlayerStatus> pluginStatus = plugin.getStatus();
         if (sender instanceof ConsoleCommandSender) {
             if (args.length != 3 || !args[0].equalsIgnoreCase("set")) {
