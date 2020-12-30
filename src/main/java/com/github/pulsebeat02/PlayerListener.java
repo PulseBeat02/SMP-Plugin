@@ -25,6 +25,10 @@ public class PlayerListener implements Listener {
         UUID uuid = player.getUniqueId();
         if (!plugin.containsPlayer(uuid)) {
             plugin.getStatus().put(uuid, new PlayerStatus( false, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime(), false, 0));
+        }
+        if (plugin.getStatus().get(uuid).isWar()) {
+            player.setDisplayName(player.getName() + ChatColor.BOLD + " " + ChatColor.RED + "[War]");
+        } else {
             player.setDisplayName(player.getName() + ChatColor.BOLD + " " + ChatColor.AQUA + "[Peaceful]");
         }
     }
@@ -49,7 +53,7 @@ public class PlayerListener implements Listener {
             who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because they are in Peaceful Mode"));
         } else if (!whoStatus.isWar()) {
             event.setCancelled(true);
-            attacked.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "They cannot attack you because you are in Peaceful Mode!"));
+            attacked.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "Turn off your Peaceful Mode if you want to attack them!"));
         } else {
             if (!whoStatus.isCombat()) {
                 who.sendMessage(plugin.formatMessage(ChatColor.RED + "You are currently Combat Tagged for attacking " + attacked.getName()));

@@ -47,7 +47,9 @@ public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
             UUID player = pl.getUniqueId();
             PlayerStatus status = pluginStatus.get(player);
             if (args.length == 0) {
-                sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Current Status: " + (status.isWar() ? "War" : "Peaceful")));
+                String peaceful = ChatColor.BOLD + " " + ChatColor.GREEN + "Peaceful";
+                String war = ChatColor.BOLD + " " + ChatColor.RED + "War";
+                sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Current Status:" + (status.isWar() ? war : peaceful)));
                 return true;
             }
             if (args.length != 2 || !args[0].equalsIgnoreCase("set")) {
