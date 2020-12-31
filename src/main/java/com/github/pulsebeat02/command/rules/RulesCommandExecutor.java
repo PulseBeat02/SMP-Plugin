@@ -21,7 +21,7 @@ public class RulesCommandExecutor implements CommandExecutor {
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String s, final String[] args) {
         TextComponent message = new TextComponent(plugin.formatMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Click On Me for the Rules of this SMP"));
-        message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,"https://github.com/PulseBeat02/SMP-Rules/blob/main/RULES.md"));
+        message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/PulseBeat02/SMP-Rules/blob/main/RULES.md"));
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to Visit the Rules")));
         sender.spigot().sendMessage(message);
         return true;

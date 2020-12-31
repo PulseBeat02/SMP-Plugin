@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 public class CustomDeathMessageExecutor implements CommandExecutor {
 
     private final SMPPlugin plugin;
+
     public CustomDeathMessageExecutor(final SMPPlugin plugin) {
         this.plugin = plugin;
     }

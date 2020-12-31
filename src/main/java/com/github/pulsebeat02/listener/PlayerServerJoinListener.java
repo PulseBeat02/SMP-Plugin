@@ -25,7 +25,7 @@ public class PlayerServerJoinListener implements Listener {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
         if (!plugin.getStatus().containsKey(uuid)) {
-            plugin.getStatus().put(uuid, new PlayerStatus( false, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime(), false, 0));
+            plugin.getStatus().put(uuid, new PlayerStatus(false, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime(), false, 0));
             player.openInventory(new PlayerModeSelectionGui(plugin, uuid).getInventory());
         }
         if (plugin.getStatus().get(uuid).isWar()) {

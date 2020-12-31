@@ -3,6 +3,7 @@ package com.github.pulsebeat02.listener;
 import com.github.pulsebeat02.PlayerStatus;
 import com.github.pulsebeat02.SMPPlugin;
 import com.github.pulsebeat02.command.GlobalTime;
+import com.google.common.collect.ImmutableSet;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -10,29 +11,28 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 public class PlayerAttackListener implements Listener {
 
+    private static final Set<PotionEffectType> negativePotionEffects = ImmutableSet.of(PotionEffectType.POISON, PotionEffectType.WEAKNESS, PotionEffectType.HARM, PotionEffectType.SLOW);
     private final SMPPlugin plugin;
 
     public PlayerAttackListener(final SMPPlugin plugin) {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerAttack(final EntityDamageByEntityEvent event) {
         Entity damager = event.getDamager();
         boolean player = event.getEntity() instanceof Player;
@@ -130,7 +130,6 @@ public class PlayerAttackListener implements Listener {
         }
     }
 
-    private static Set<PotionEffectType> negativePotionEffects = new HashSet<>(Arrays.asList(PotionEffectType.POISON, PotionEffectType.WEAKNESS, PotionEffectType.HARM, PotionEffectType.SLOW));
     private boolean containsBadPotionEffects(final ThrownPotion pot) {
         for (PotionEffect effect : pot.getEffects()) {
             if (negativePotionEffects.contains(effect.getType())) {

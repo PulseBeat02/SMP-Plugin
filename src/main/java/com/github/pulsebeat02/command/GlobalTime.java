@@ -7,10 +7,13 @@ public enum GlobalTime {
     COMBAT_TIMER(20 * 60 * 30);
 
     private final long time;
+
     GlobalTime(final long time) {
         this.time = time;
     }
 
-    public long getTime() { return time; }
+    public long getTime() {
+        return time;
+    }
 
 }

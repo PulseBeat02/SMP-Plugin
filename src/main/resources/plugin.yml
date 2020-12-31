@@ -22,6 +22,8 @@ commands:
     description: Gets the Dynamcic Map of the SMP Server
     permission: smp.map
     usage: "/dynmap"
+  r:
+    description: Replies to the Recent Player you talked with
 permissions:
   smp.status:
     description: Allows the user to set their status
@@ -34,6 +36,9 @@ permissions:
     default: true
   smp.map:
     description: Allows the user to use the map command
+    default: true
+  smp.r:
+    description: Allows the user to reply to others
     default: true
   smp.*:
     description: Allows access to all commands

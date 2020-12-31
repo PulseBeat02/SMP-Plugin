@@ -1,8 +1,8 @@
 package com.github.pulsebeat02.command.status;
 
-import com.github.pulsebeat02.command.GlobalTime;
 import com.github.pulsebeat02.PlayerStatus;
 import com.github.pulsebeat02.SMPPlugin;
+import com.github.pulsebeat02.command.GlobalTime;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -57,7 +57,7 @@ public class StatusCommandExecutor implements CommandExecutor {
                 return true;
             }
             if (status.isCombat()) {
-                sender.sendMessage(plugin.formatMessage(ChatColor.RED + "You cannot execute this command while combat tagged! (" + status.getCombatCooldown()/1200 + " seconds left)"));
+                sender.sendMessage(plugin.formatMessage(ChatColor.RED + "You cannot execute this command while combat tagged! (" + status.getCombatCooldown() / 1200 + " seconds left)"));
                 return true;
             }
             String name = pl.getName();

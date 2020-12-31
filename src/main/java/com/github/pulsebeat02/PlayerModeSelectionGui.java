@@ -68,7 +68,9 @@ public class PlayerModeSelectionGui implements Listener {
         return stack;
     }
 
-    public Inventory getInventory() { return inv; }
+    public Inventory getInventory() {
+        return inv;
+    }
 
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
@@ -83,13 +85,13 @@ public class PlayerModeSelectionGui implements Listener {
         event.setCancelled(true);
         switch (event.getSlot()) {
             case 12:
-                plugin.getStatus().put(uuid, new PlayerStatus( false, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime(), false, 0));
+                plugin.getStatus().put(uuid, new PlayerStatus(false, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime(), false, 0));
                 entity.closeInventory();
                 entity.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Set your status to " + ChatColor.GREEN + "Peaceful"));
                 event.getHandlers().unregister(this);
                 break;
             case 14:
-                plugin.getStatus().put(uuid, new PlayerStatus( true, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime(), false, 0));
+                plugin.getStatus().put(uuid, new PlayerStatus(true, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime(), false, 0));
                 entity.closeInventory();
                 entity.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Set your status to " + ChatColor.RED + "War"));
                 event.getHandlers().unregister(this);
