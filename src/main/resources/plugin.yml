@@ -7,19 +7,33 @@ author: PulseBeat_02
 prefix: SMP Plugin
 commands:
   status:
-    description: Sets your current status
+    description: Sets your Current Status
     permission: smp.status
     usage: "/status set [peaceful | war]"
   customdeathmessages:
-    description: Sets custom death messages
+    description: Sets Custom Death Messages
     permission: smp.customdeathmessages
     usage: "/customdeathmessages [true | false]"
+  rules:
+    description: Get the Rules of the SMP server
+    permission: smp.rules
+    usage: "/rules"
+  map:
+    description: Gets the Dynamcic Map of the SMP Server
+    permission: smp.map
+    usage: "/dynmap"
 permissions:
   smp.status:
-    description: Allows the user to set the status
+    description: Allows the user to set their status
     default: true
   smp.customdeathmessages:
     description: Allows the user to set their custom death message
+    default: true
+  smp.rules:
+    description: Allows the user to use the rules command
+    default: true
+  smp.map:
+    description: Allows the user to use the map command
     default: true
   smp.*:
     description: Allows access to all commands

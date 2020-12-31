@@ -1,13 +1,14 @@
 package com.github.pulsebeat02;
 
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
+import com.github.pulsebeat02.command.death.CustomDeathMessageCompleter;
+import com.github.pulsebeat02.command.death.CustomDeathMessageExecutor;
+import com.github.pulsebeat02.command.dynmap.DynmapCommandExecutor;
+import com.github.pulsebeat02.command.rules.RulesCommandExecutor;
+import com.github.pulsebeat02.command.status.StatusCommandCompleter;
+import com.github.pulsebeat02.command.status.StatusCommandExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -40,12 +41,12 @@ public class SMPPlugin extends JavaPlugin {
         loadConfig();
         loadTimers();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-        StatusCommandExecutor statusCommandExecutor = new StatusCommandExecutor(this);
-        CustomDeathMessageExecutor customDeathMessageExecutor = new CustomDeathMessageExecutor(this);
-        getCommand("status").setExecutor(statusCommandExecutor);
-        getCommand("status").setTabCompleter(statusCommandExecutor);
-        getCommand("customdeathmessages").setExecutor(customDeathMessageExecutor);
-        getCommand("customdeathmessages").setTabCompleter(customDeathMessageExecutor);
+        getCommand("status").setExecutor(new StatusCommandExecutor(this));
+        getCommand("status").setTabCompleter(new StatusCommandCompleter());
+        getCommand("customdeathmessages").setExecutor(new CustomDeathMessageExecutor(this));
+        getCommand("customdeathmessages").setTabCompleter(new CustomDeathMessageCompleter());
+        getCommand("rules").setExecutor(new RulesCommandExecutor(this));
+        getCommand("map").setExecutor(new DynmapCommandExecutor(this));
         long after = System.currentTimeMillis();
         logger.info(ChatColor.YELLOW + "SMP Plugin has Loaded (Took " + (after - before) + " Milliseconds)");
     }
@@ -69,16 +70,6 @@ public class SMPPlugin extends JavaPlugin {
     public void loadTimers() {
         Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, this::decrementTimers, 20L,20L);
         Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, this::writeConfig, 20L, 20L * 15L * 60L);
-        Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, this::rulesAnnouncement, 20L, 20L * 180L * 60L);
-    }
-
-    public void rulesAnnouncement() {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            TextComponent message = new TextComponent(formatMessage(ChatColor.BOLD + "" + ChatColor.AQUA + "Click On Me for the Rules of this SMP"));
-            message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,"https://github.com/PulseBeat02/SMP-Rules/blob/main/RULES.md"));
-            message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to Visit the Rules")));
-            p.spigot().sendMessage(message);
-        }
     }
 
     public void decrementTimers() {

@@ -1,20 +1,20 @@
-package com.github.pulsebeat02;
+package com.github.pulsebeat02.command.status;
 
+import com.github.pulsebeat02.GlobalTime;
+import com.github.pulsebeat02.PlayerStatus;
+import com.github.pulsebeat02.SMPPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
+public class StatusCommandExecutor implements CommandExecutor {
 
     private final SMPPlugin plugin;
 
@@ -100,18 +100,4 @@ public class StatusCommandExecutor implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    @Override
-    public List<String> onTabComplete(final CommandSender commandSender, final Command command, final String s, final String[] args) {
-        if (command.getName().equalsIgnoreCase("status")) {
-            List<String> complete = new ArrayList<>();
-            if (args.length == 1) {
-                complete.add("set");
-            } else if (args[0].equalsIgnoreCase("set")) {
-                complete.add("peaceful");
-                complete.add("war");
-            }
-            return complete;
-        }
-        return null;
-    }
 }
