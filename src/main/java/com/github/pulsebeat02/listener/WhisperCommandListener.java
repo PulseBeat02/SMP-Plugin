@@ -57,7 +57,7 @@ public class WhisperCommandListener implements Listener {
         if (to == null) {
             from.sendMessage(plugin.formatMessage(ChatColor.RED + "That player isn't online or valid!"));
         }
-        String message = split[2];
+        String message = plugin.concatenateAfterIndex(split, 2);
         Map<CommandSender, CommandSender> messages = plugin.getMessages();
         if (!messages.containsKey(from)) {
             messages.put(from, to);

@@ -28,10 +28,10 @@ public class ReplyCommandExecutor implements CommandExecutor {
             return true;
         }
         CommandSender to = messages.get(sender);
-        to.sendMessage(plugin.getFormattedSenderMessageTo(sender, args[1]));
-        sender.sendMessage(plugin.getFormattedSenderMessageFrom(to, args[1]));
+        String message = plugin.concatenateAfterIndex(args, 1);
+        to.sendMessage(plugin.getFormattedSenderMessageTo(sender, message));
+        sender.sendMessage(plugin.getFormattedSenderMessageFrom(to, message));
         return true;
     }
-
 
 }

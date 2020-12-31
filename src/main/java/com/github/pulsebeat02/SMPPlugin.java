@@ -146,6 +146,14 @@ public class SMPPlugin extends JavaPlugin {
                 + ChatColor.AQUA + message;
     }
 
+    public String concatenateAfterIndex(final String[] arr, final int index) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = index; i < arr.length; i++) {
+            sb.append(arr[index]);
+        }
+        return sb.toString();
+    }
+
     public Map<UUID, PlayerStatus> getStatus() {
         return status;
     }
