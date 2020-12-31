@@ -1,6 +1,6 @@
 package com.github.pulsebeat02.command.status;
 
-import com.github.pulsebeat02.GlobalTime;
+import com.github.pulsebeat02.command.GlobalTime;
 import com.github.pulsebeat02.PlayerStatus;
 import com.github.pulsebeat02.SMPPlugin;
 import org.bukkit.Bukkit;

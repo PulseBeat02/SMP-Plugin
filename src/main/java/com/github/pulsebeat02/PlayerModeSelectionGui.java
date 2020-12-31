@@ -1,5 +1,6 @@
 package com.github.pulsebeat02;
 
+import com.github.pulsebeat02.command.GlobalTime;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

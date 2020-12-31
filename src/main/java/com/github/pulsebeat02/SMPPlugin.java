@@ -1,9 +1,12 @@
 package com.github.pulsebeat02;
 
+import com.github.pulsebeat02.listener.PlayerDeathListener;
+import com.github.pulsebeat02.listener.PlayerServerJoinListener;
 import com.github.pulsebeat02.command.death.CustomDeathMessageCompleter;
 import com.github.pulsebeat02.command.death.CustomDeathMessageExecutor;
 import com.github.pulsebeat02.command.dynmap.DynmapCommandExecutor;
 import com.github.pulsebeat02.command.rules.RulesCommandExecutor;
+import com.github.pulsebeat02.listener.PlayerAttackListener;
 import com.github.pulsebeat02.command.status.StatusCommandCompleter;
 import com.github.pulsebeat02.command.status.StatusCommandExecutor;
 import org.bukkit.Bukkit;
@@ -34,19 +37,10 @@ public class SMPPlugin extends JavaPlugin {
         logger = getLogger();
         logger.info(ChatColor.YELLOW + "SMP Plugin is Loading");
         long before = System.currentTimeMillis();
-        if (!getDataFolder().exists() || config == null) {
-            saveConfig();
-        }
-        config = getConfig();
         loadConfig();
         loadTimers();
-        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-        getCommand("status").setExecutor(new StatusCommandExecutor(this));
-        getCommand("status").setTabCompleter(new StatusCommandCompleter());
-        getCommand("customdeathmessages").setExecutor(new CustomDeathMessageExecutor(this));
-        getCommand("customdeathmessages").setTabCompleter(new CustomDeathMessageCompleter());
-        getCommand("rules").setExecutor(new RulesCommandExecutor(this));
-        getCommand("map").setExecutor(new DynmapCommandExecutor(this));
+        loadListeners();
+        loadCommands();
         long after = System.currentTimeMillis();
         logger.info(ChatColor.YELLOW + "SMP Plugin has Loaded (Took " + (after - before) + " Milliseconds)");
     }
@@ -61,11 +55,20 @@ public class SMPPlugin extends JavaPlugin {
         logger.info(ChatColor.YELLOW + "SMP Plugin has Shut Down (Took " + (after - before) + " Milliseconds)");
     }
 
-    public boolean containsPlayer(final UUID player) { return status.containsKey(player); }
+    public void loadCommands() {
+        getCommand("status").setExecutor(new StatusCommandExecutor(this));
+        getCommand("status").setTabCompleter(new StatusCommandCompleter());
+        getCommand("customdeathmessages").setExecutor(new CustomDeathMessageExecutor(this));
+        getCommand("customdeathmessages").setTabCompleter(new CustomDeathMessageCompleter());
+        getCommand("rules").setExecutor(new RulesCommandExecutor(this));
+        getCommand("map").setExecutor(new DynmapCommandExecutor(this));
+    }
 
-    public Map<UUID, PlayerStatus> getStatus() { return status; }
-
-    public Set<UUID> getDeathMessages() { return deathMessages; }
+    public void loadListeners() {
+        getServer().getPluginManager().registerEvents(new PlayerServerJoinListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerAttackListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
+    }
 
     public void loadTimers() {
         Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, this::decrementTimers, 20L,20L);
@@ -84,6 +87,10 @@ public class SMPPlugin extends JavaPlugin {
     }
 
     public void loadConfig() {
+        if (!getDataFolder().exists() || config == null) {
+            saveConfig();
+        }
+        config = getConfig();
         for (String uuid : getConfig().getKeys(false)) {
             boolean atWar = config.getBoolean(uuid + ".Status");
             long peacefulcd = config.getLong(uuid + ".PeacefulCooldown");
@@ -113,5 +120,9 @@ public class SMPPlugin extends JavaPlugin {
     public String formatMessage(String message) {
         return ChatColor.GOLD + "" + ChatColor.BOLD + "[SMP]" + ChatColor.GOLD + " " + message;
     }
+
+    public Map<UUID, PlayerStatus> getStatus() { return status; }
+
+    public Set<UUID> getDeathMessages() { return deathMessages; }
 
 }

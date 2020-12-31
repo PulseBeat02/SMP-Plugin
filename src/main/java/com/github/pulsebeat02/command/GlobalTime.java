@@ -1,4 +1,4 @@
-package com.github.pulsebeat02;
+package com.github.pulsebeat02.command;
 
 public enum GlobalTime {
 

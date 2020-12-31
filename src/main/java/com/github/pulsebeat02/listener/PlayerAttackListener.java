@@ -1,5 +1,8 @@
-package com.github.pulsebeat02;
+package com.github.pulsebeat02.listener;
 
+import com.github.pulsebeat02.PlayerStatus;
+import com.github.pulsebeat02.SMPPlugin;
+import com.github.pulsebeat02.command.GlobalTime;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -11,7 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
@@ -22,27 +24,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class PlayerListener implements Listener {
+public class PlayerAttackListener implements Listener {
 
     private final SMPPlugin plugin;
 
-    public PlayerListener(final SMPPlugin plugin) {
+    public PlayerAttackListener(final SMPPlugin plugin) {
         this.plugin = plugin;
-    }
-
-    @EventHandler
-    public void onPlayerJoin(final PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        UUID uuid = player.getUniqueId();
-        if (!plugin.containsPlayer(uuid)) {
-            plugin.getStatus().put(uuid, new PlayerStatus( false, GlobalTime.WAR_TO_PEACEFUL.getTime(), GlobalTime.PEACEFUL_TO_WAR.getTime(), false, 0));
-            player.openInventory(new PlayerModeSelectionGui(plugin, uuid).getInventory());
-        }
-        if (plugin.getStatus().get(uuid).isWar()) {
-            player.setDisplayName(player.getName() + ChatColor.BOLD + " " + ChatColor.RED + "[War]");
-        } else {
-            player.setDisplayName(player.getName() + ChatColor.BOLD + " " + ChatColor.AQUA + "[Peaceful]");
-        }
     }
 
     @EventHandler
@@ -160,65 +147,6 @@ public class PlayerListener implements Listener {
             }
         }
         return false;
-    }
-
-    @EventHandler
-    public void onPlayerDeath(final PlayerDeathEvent event) {
-        Player entity = event.getEntity();
-        if (plugin.getDeathMessages().contains(entity.getUniqueId())) {
-            Player killer = entity.getKiller();
-            String kName = null;
-            if (killer != null) {
-                kName = killer.getDisplayName();
-            } else {
-                return;
-            }
-            String pName = entity.getName();
-            String deathMessage = "";
-            switch (entity.getLastDamageCause().getCause()) {
-                case DROWNING:
-                    deathMessage = ChatColor.AQUA + pName + " drowned in " + ChatColor.BOLD + "Pepsi";
-                    break;
-                case ENTITY_ATTACK:
-                case ENTITY_SWEEP_ATTACK:
-                    deathMessage = ChatColor.RED + pName + " was smited into " + ChatColor.BOLD + "smithereens" + ChatColor.RESET + " " + ChatColor.RED + "by " + kName;
-                    break;
-                case SUFFOCATION:
-                    deathMessage = ChatColor.RED + pName + " died from " + ChatColor.BOLD + "suffocation" + ChatColor.RESET + " " + ChatColor.BOLD + "lol";
-                    break;
-                case FALL:
-                    deathMessage = ChatColor.RED + pName + " fell from the sky to their death xd" + ChatColor.MAGIC + " kekw";
-                    break;
-                case FIRE:
-                case FIRE_TICK:
-                    deathMessage = ChatColor.RED + pName + " ate too many " + ChatColor.BOLD + "spicy chicken wings" + ChatColor.RESET + ChatColor.RED + " and burnt to a crisp";
-                    break;
-                case LAVA:
-                    deathMessage = ChatColor.RED + pName + " fell into some" + ChatColor.BOLD + " laba";
-                    break;
-                case BLOCK_EXPLOSION:
-                case ENTITY_EXPLOSION:
-                    deathMessage = ChatColor.RED + pName + " was blown up!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + ChatColor.AQUA + "!!!!!!!!!!!!!!!";
-                    break;
-                case VOID:
-                    deathMessage = ChatColor.RED + pName + " committed " + ChatColor.BOLD + "Sudoku";
-                    break;
-                case POISON:
-                case WITHER:
-                    deathMessage = ChatColor.RED + pName + " died from the " + ChatColor.BOLD + "coronavirus" + ChatColor.RESET + ChatColor.RED + ". YIKES";
-                    break;
-                case MAGIC:
-                    deathMessage = ChatColor.RED + pName + " was killed by " + ChatColor.GOLD + ChatColor.BOLD + "Harry Potter";
-                    break;
-                case DRAGON_BREATH:
-                    deathMessage = ChatColor.RED + pName + " died from the dragon's " + ChatColor.BOLD + "stanky breath";
-                    break;
-                case FLY_INTO_WALL:
-                    deathMessage = ChatColor.RED + pName + " doesn't know how to use an " + ChatColor.BOLD + "elytra";
-                    break;
-            }
-            event.setDeathMessage(deathMessage);
-        }
     }
 
 }
