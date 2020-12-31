@@ -27,7 +27,7 @@ public class CustomDeathMessageExecutor implements CommandExecutor, TabCompleter
         if (args.length == 0) {
             String enabled = ChatColor.BOLD + " " + ChatColor.GREEN + "Enabled";
             String disabled = ChatColor.BOLD + " " + ChatColor.RED + "Disabled";
-            sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Current Custom Death Messages: " + (plugin.getDeathMessages().contains(player.getUniqueId()) ? enabled : disabled)));
+            sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Current Custom Death Messages:" + (plugin.getDeathMessages().contains(player.getUniqueId()) ? enabled : disabled)));
         } else if (args.length == 1) {
             try {
                 if (Boolean.parseBoolean(args[0])) {
