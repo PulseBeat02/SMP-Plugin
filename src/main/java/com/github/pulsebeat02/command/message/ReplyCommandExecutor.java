@@ -18,7 +18,7 @@ public class ReplyCommandExecutor implements CommandExecutor {
 
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String s, final String[] args) {
-        if (args.length != 2) {
+        if (args.length != 1) {
             sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Invalid Arguments: /r [message]"));
             return true;
         }
@@ -27,7 +27,9 @@ public class ReplyCommandExecutor implements CommandExecutor {
             sender.sendMessage(plugin.formatMessage(ChatColor.RED + "You haven't messaged anyone recently!"));
             return true;
         }
-        messages.get(sender).sendMessage(plugin.getFormattedSenderMessage(sender, args[1]));
+        CommandSender to = messages.get(sender);
+        to.sendMessage(plugin.getFormattedSenderMessageTo(sender, args[1]));
+        sender.sendMessage(plugin.getFormattedSenderMessageFrom(to, args[1]));
         return true;
     }
 

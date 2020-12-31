@@ -24,6 +24,8 @@ commands:
     usage: "/dynmap"
   r:
     description: Replies to the Recent Player you talked with
+    permission: smp.r
+    usage: "/r [message]"
 permissions:
   smp.status:
     description: Allows the user to set their status

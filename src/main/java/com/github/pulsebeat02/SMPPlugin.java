@@ -130,10 +130,18 @@ public class SMPPlugin extends JavaPlugin {
         return ChatColor.GOLD + "" + ChatColor.BOLD + "[SMP]" + ChatColor.GOLD + " " + message;
     }
 
-    public String getFormattedSenderMessage(final CommandSender who, final String message) {
+    public String getFormattedSenderMessageTo(final CommandSender who, final String message) {
         return ChatColor.LIGHT_PURPLE + who.getName()
                 + ChatColor.RED + " -> "
                 + ChatColor.LIGHT_PURPLE + "me"
+                + ChatColor.RED + ": "
+                + ChatColor.AQUA + message;
+    }
+
+    public String getFormattedSenderMessageFrom(final CommandSender to, final String message) {
+        return ChatColor.LIGHT_PURPLE + "me"
+                + ChatColor.RED + " -> "
+                + ChatColor.LIGHT_PURPLE + to.getName()
                 + ChatColor.RED + ": "
                 + ChatColor.AQUA + message;
     }

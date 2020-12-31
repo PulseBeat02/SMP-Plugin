@@ -5,10 +5,10 @@ import com.google.common.collect.ImmutableSet;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 
 import java.util.Map;
 import java.util.Set;
@@ -30,8 +30,8 @@ public class WhisperCommandListener implements Listener {
         }
         event.setCancelled(true);
         String[] split = msg.split(" ");
-        Player from = event.getPlayer();
-        Player to = Bukkit.getPlayer(split[1]);
+        CommandSender from = event.getPlayer();
+        CommandSender to = Bukkit.getPlayer(split[1]);
         if (to == null) {
             from.sendMessage(plugin.formatMessage(ChatColor.RED + "That player isn't online or valid!"));
         }
@@ -40,18 +40,40 @@ public class WhisperCommandListener implements Listener {
         if (!messages.containsKey(from)) {
             messages.put(from, to);
         }
-        to.sendMessage(plugin.getFormattedSenderMessage(from, message));
+        to.sendMessage(plugin.getFormattedSenderMessageTo(from, message));
+        from.sendMessage(plugin.getFormattedSenderMessageFrom(to, message));
+    }
+
+    @EventHandler
+    public void onConsoleExecuteCommand(final ServerCommandEvent event) {
+        String msg = event.getCommand();
+        if (!containsAlias(msg)) {
+            return;
+        }
+        event.setCancelled(true);
+        String[] split = msg.split(" ");
+        CommandSender from = event.getSender();
+        CommandSender to = Bukkit.getPlayer(split[1]);
+        if (to == null) {
+            from.sendMessage(plugin.formatMessage(ChatColor.RED + "That player isn't online or valid!"));
+        }
+        String message = split[2];
+        Map<CommandSender, CommandSender> messages = plugin.getMessages();
+        if (!messages.containsKey(from)) {
+            messages.put(from, to);
+        }
+        to.sendMessage(plugin.getFormattedSenderMessageTo(from, message));
+        from.sendMessage(plugin.getFormattedSenderMessageFrom(to, message));
     }
 
     private boolean containsAlias(final String message) {
-        String trimmed = message.substring(0, 5);
+        String[] trimmed = message.split(" ");
         for (String alias : aliases) {
-            if (alias.equalsIgnoreCase(trimmed)) {
+            if (alias.equalsIgnoreCase(trimmed[0])) {
                 return true;
             }
         }
         return false;
     }
-
 
 }
