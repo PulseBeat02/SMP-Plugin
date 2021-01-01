@@ -6,6 +6,8 @@ import com.github.pulsebeat02.command.dynmap.DynmapCommandExecutor;
 import com.github.pulsebeat02.command.message.ReplyCommandCompleter;
 import com.github.pulsebeat02.command.message.ReplyCommandExecutor;
 import com.github.pulsebeat02.command.rules.RulesCommandExecutor;
+import com.github.pulsebeat02.command.stalk.StalkCommandCompleter;
+import com.github.pulsebeat02.command.stalk.StalkCommandExecutor;
 import com.github.pulsebeat02.command.status.StatusCommandCompleter;
 import com.github.pulsebeat02.command.status.StatusCommandExecutor;
 import com.github.pulsebeat02.listener.PlayerAttackListener;
@@ -70,6 +72,8 @@ public class SMPPlugin extends JavaPlugin {
         getCommand("map").setExecutor(new DynmapCommandExecutor(this));
         getCommand("r").setExecutor(new ReplyCommandExecutor(this));
         getCommand("r").setTabCompleter(new ReplyCommandCompleter(this));
+        getCommand("stalk").setExecutor(new StalkCommandExecutor(this));
+        getCommand("stalk").setTabCompleter(new StalkCommandCompleter());
     }
 
     public void loadListeners() {
@@ -149,9 +153,10 @@ public class SMPPlugin extends JavaPlugin {
     public String concatenateAfterIndex(final String[] arr, final int index) {
         StringBuilder sb = new StringBuilder();
         for (int i = index; i < arr.length; i++) {
-            sb.append(arr[index]);
+            sb.append(arr[i]);
+            sb.append(" ");
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 
     public Map<UUID, PlayerStatus> getStatus() {

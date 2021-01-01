@@ -23,8 +23,8 @@ public class CustomDeathMessageExecutor implements CommandExecutor {
         }
         Player player = (Player) sender;
         if (args.length == 0) {
-            String enabled = ChatColor.BOLD + " " + ChatColor.GREEN + "Enabled";
-            String disabled = ChatColor.BOLD + " " + ChatColor.RED + "Disabled";
+            String enabled = ChatColor.GREEN + " " + ChatColor.BOLD + "Enabled";
+            String disabled = ChatColor.RED + " " + ChatColor.BOLD + "Disabled";
             sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Current Custom Death Messages:" + (plugin.getDeathMessages().contains(player.getUniqueId()) ? enabled : disabled)));
         } else if (args.length == 1) {
             try {

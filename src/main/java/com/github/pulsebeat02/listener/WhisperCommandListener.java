@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class WhisperCommandListener implements Listener {
 
-    private static final Set<String> aliases = ImmutableSet.of("/tell", "/w", "/msg");
+    private static final Set<String> aliases = ImmutableSet.of("tell", "w", "msg");
     private final SMPPlugin plugin;
 
     public WhisperCommandListener(final SMPPlugin plugin) {
@@ -25,7 +25,7 @@ public class WhisperCommandListener implements Listener {
     @EventHandler
     public void onPlayerExecuteCommand(final PlayerCommandPreprocessEvent event) {
         String msg = event.getMessage();
-        if (!containsAlias(msg)) {
+        if (!containsAliasPlayer(msg)) {
             return;
         }
         event.setCancelled(true);
@@ -33,9 +33,14 @@ public class WhisperCommandListener implements Listener {
         CommandSender from = event.getPlayer();
         CommandSender to = Bukkit.getPlayer(split[1]);
         if (to == null) {
-            from.sendMessage(plugin.formatMessage(ChatColor.RED + "That player isn't online or valid!"));
+            if (split[1].equalsIgnoreCase("Console") || split[1].equalsIgnoreCase("Server")) {
+                to = Bukkit.getConsoleSender();
+            } else {
+                from.sendMessage(plugin.formatMessage(ChatColor.RED + "That player isn't online or valid!"));
+                return;
+            }
         }
-        String message = split[2];
+        String message = plugin.concatenateAfterIndex(split, 2);
         Map<CommandSender, CommandSender> messages = plugin.getMessages();
         if (!messages.containsKey(from)) {
             messages.put(from, to);
@@ -47,7 +52,7 @@ public class WhisperCommandListener implements Listener {
     @EventHandler
     public void onConsoleExecuteCommand(final ServerCommandEvent event) {
         String msg = event.getCommand();
-        if (!containsAlias(msg)) {
+        if (!containsAliasConsole(msg)) {
             return;
         }
         event.setCancelled(true);
@@ -56,6 +61,7 @@ public class WhisperCommandListener implements Listener {
         CommandSender to = Bukkit.getPlayer(split[1]);
         if (to == null) {
             from.sendMessage(plugin.formatMessage(ChatColor.RED + "That player isn't online or valid!"));
+            return;
         }
         String message = plugin.concatenateAfterIndex(split, 2);
         Map<CommandSender, CommandSender> messages = plugin.getMessages();
@@ -66,7 +72,17 @@ public class WhisperCommandListener implements Listener {
         from.sendMessage(plugin.getFormattedSenderMessageFrom(to, message));
     }
 
-    private boolean containsAlias(final String message) {
+    private boolean containsAliasPlayer(final String message) {
+        String[] trimmed = message.split(" ");
+        for (String alias : aliases) {
+            if (alias.equalsIgnoreCase("/" + trimmed[0])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean containsAliasConsole(final String message) {
         String[] trimmed = message.split(" ");
         for (String alias : aliases) {
             if (alias.equalsIgnoreCase(trimmed[0])) {

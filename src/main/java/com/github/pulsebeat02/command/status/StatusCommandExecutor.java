@@ -47,8 +47,8 @@ public class StatusCommandExecutor implements CommandExecutor {
             UUID player = pl.getUniqueId();
             PlayerStatus status = pluginStatus.get(player);
             if (args.length == 0) {
-                String peaceful = ChatColor.BOLD + " " + ChatColor.GREEN + "Peaceful";
-                String war = ChatColor.BOLD + " " + ChatColor.RED + "War";
+                String peaceful = ChatColor.GREEN + " " + ChatColor.BOLD + "Peaceful";
+                String war = ChatColor.RED + " " + ChatColor.BOLD + "War";
                 sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Current Status:" + (status.isWar() ? war : peaceful)));
                 return true;
             }

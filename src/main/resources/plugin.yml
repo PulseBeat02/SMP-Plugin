@@ -26,6 +26,10 @@ commands:
     description: Replies to the Recent Player you talked with
     permission: smp.r
     usage: "/r [message]"
+  stalk:
+    description: Turns you Invisible (Packet Side Invisibility)
+    permission: smp.stalk
+    usage: "/stalk [true | false]"
 permissions:
   smp.status:
     description: Allows the user to set their status
@@ -42,6 +46,9 @@ permissions:
   smp.r:
     description: Allows the user to reply to others
     default: true
+  smp.stalk:
+    description: Allows the user to stalk others
+    default: op
   smp.*:
     description: Allows access to all commands
     default: op

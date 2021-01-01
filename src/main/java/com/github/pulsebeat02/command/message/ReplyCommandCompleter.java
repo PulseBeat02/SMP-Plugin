@@ -18,7 +18,7 @@ public class ReplyCommandCompleter implements TabCompleter {
 
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String s, final String[] args) {
-        if (command.getName().equalsIgnoreCase("r")) {
+        if (plugin.getMessages().containsKey(sender)) {
             return Collections.singletonList(plugin.getMessages().get(sender).getName());
         }
         return null;
