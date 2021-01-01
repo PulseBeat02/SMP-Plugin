@@ -75,7 +75,7 @@ public class WhisperCommandListener implements Listener {
     private boolean containsAliasPlayer(final String message) {
         String[] trimmed = message.split(" ");
         for (String alias : aliases) {
-            if (alias.equalsIgnoreCase("/" + trimmed[0])) {
+            if (("/" + alias).equalsIgnoreCase(trimmed[0])) {
                 return true;
             }
         }

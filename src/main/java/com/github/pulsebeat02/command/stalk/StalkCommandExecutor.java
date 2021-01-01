@@ -7,6 +7,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class StalkCommandExecutor implements CommandExecutor {
 
@@ -33,6 +36,7 @@ public class StalkCommandExecutor implements CommandExecutor {
         if (args.length == 1) {
             try {
                 if (Boolean.parseBoolean(args[0])) {
+                    pl.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 100000, 2));
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         p.hidePlayer(plugin, pl);
                     }
@@ -40,6 +44,7 @@ public class StalkCommandExecutor implements CommandExecutor {
                     stalk = true;
                     return true;
                 } else {
+                    pl.removePotionEffect(PotionEffectType.INVISIBILITY);
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         p.showPlayer(plugin, pl);
                     }
