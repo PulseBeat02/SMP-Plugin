@@ -41,10 +41,7 @@ public class WhisperCommandListener implements Listener {
             }
         }
         String message = plugin.concatenateAfterIndex(split, 2);
-        Map<CommandSender, CommandSender> messages = plugin.getMessages();
-        if (!messages.containsKey(from)) {
-            messages.put(from, to);
-        }
+        plugin.getMessages().put(from, to);
         to.sendMessage(plugin.getFormattedSenderMessageTo(from, message));
         from.sendMessage(plugin.getFormattedSenderMessageFrom(to, message));
     }
@@ -64,10 +61,7 @@ public class WhisperCommandListener implements Listener {
             return;
         }
         String message = plugin.concatenateAfterIndex(split, 2);
-        Map<CommandSender, CommandSender> messages = plugin.getMessages();
-        if (!messages.containsKey(from)) {
-            messages.put(from, to);
-        }
+        plugin.getMessages().put(from, to);
         to.sendMessage(plugin.getFormattedSenderMessageTo(from, message));
         from.sendMessage(plugin.getFormattedSenderMessageFrom(to, message));
     }
