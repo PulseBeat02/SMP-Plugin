@@ -42,6 +42,7 @@ public class WhisperCommandListener implements Listener {
         }
         String message = plugin.concatenateAfterIndex(split, 2);
         plugin.getMessages().put(from, to);
+        plugin.getMessages().put(to, from);
         to.sendMessage(plugin.getFormattedSenderMessageTo(from, message));
         from.sendMessage(plugin.getFormattedSenderMessageFrom(to, message));
     }
@@ -62,6 +63,7 @@ public class WhisperCommandListener implements Listener {
         }
         String message = plugin.concatenateAfterIndex(split, 2);
         plugin.getMessages().put(from, to);
+        plugin.getMessages().put(to, from);
         to.sendMessage(plugin.getFormattedSenderMessageTo(from, message));
         from.sendMessage(plugin.getFormattedSenderMessageFrom(to, message));
     }
