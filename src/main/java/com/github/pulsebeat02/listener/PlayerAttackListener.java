@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
@@ -35,64 +36,91 @@ public class PlayerAttackListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerAttack(final EntityDamageByEntityEvent event) {
         Entity damager = event.getDamager();
-        boolean player = event.getEntity() instanceof Player;
-        if (player && event.getDamager() instanceof Player) {
-            Player who = (Player) event.getDamager();
-            Player attacked = (Player) event.getEntity();
-            if (event.getDamage() <= 1.5) {
-                return;
-            }
-            UUID whoUuid = who.getUniqueId();
-            UUID attackedUuid = attacked.getUniqueId();
-            Map<UUID, PlayerStatus> pluginStatus = plugin.getStatus();
-            PlayerStatus whoStatus = pluginStatus.get(whoUuid);
-            PlayerStatus attackedStatus = pluginStatus.get(attackedUuid);
-            if (!attackedStatus.isWar()) {
-                event.setCancelled(true);
-                who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because they are in Peaceful Mode"));
-            } else if (!whoStatus.isWar()) {
-                event.setCancelled(true);
-                who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "Turn off your Peaceful Mode if you want to attack them!"));
-            } else {
-                if (!whoStatus.isCombat()) {
-                    who.sendMessage(plugin.formatMessage(ChatColor.RED + "You are currently Combat Tagged for attacking " + attacked.getName()));
-                    pluginStatus.get(whoUuid).setCombat(true);
-                    pluginStatus.get(whoUuid).setCombatCooldown(GlobalTime.COMBAT_TIMER.getTime());
+        Entity ent = event.getEntity();
+        if (ent instanceof Player) {
+            if (damager instanceof Player) {
+                Player who = (Player) ent;
+                Player attacked = (Player) event.getEntity();
+                if (event.getDamage() <= 1.5) {
+                    return;
                 }
-            }
-        } else if (player) {
-            if (!(damager instanceof Arrow)) {
-                return;
-            }
-            Arrow arr = (Arrow) damager;
-            if (!containsBadArrowEffects(arr)) {
-                return;
-            }
-            ProjectileSource source = arr.getShooter();
-            if (!(source instanceof Player)) {
-                return;
-            }
-            Player who = (Player) source;
-            Player attacked = (Player) event.getEntity();
-            if (who.getUniqueId() == attacked.getUniqueId()) {
-                return;
-            }
-            UUID whoUuid = who.getUniqueId();
-            UUID attackedUuid = attacked.getUniqueId();
-            Map<UUID, PlayerStatus> pluginStatus = plugin.getStatus();
-            PlayerStatus whoStatus = pluginStatus.get(whoUuid);
-            PlayerStatus attackedStatus = pluginStatus.get(attackedUuid);
-            if (!attackedStatus.isWar()) {
-                event.setCancelled(true);
-                who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because they are in Peaceful Mode"));
-            } else if (!whoStatus.isWar()) {
-                event.setCancelled(true);
-                who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "Turn off your Peaceful Mode if you want to attack them!"));
-            } else {
-                if (!whoStatus.isCombat()) {
-                    who.sendMessage(plugin.formatMessage(ChatColor.RED + "You are currently Combat Tagged for attacking " + attacked.getName()));
-                    pluginStatus.get(whoUuid).setCombat(true);
-                    pluginStatus.get(whoUuid).setCombatCooldown(GlobalTime.COMBAT_TIMER.getTime());
+                UUID whoUuid = who.getUniqueId();
+                UUID attackedUuid = attacked.getUniqueId();
+                Map<UUID, PlayerStatus> pluginStatus = plugin.getStatus();
+                PlayerStatus whoStatus = pluginStatus.get(whoUuid);
+                PlayerStatus attackedStatus = pluginStatus.get(attackedUuid);
+                if (!attackedStatus.isWar()) {
+                    event.setCancelled(true);
+                    who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because they are in Peaceful Mode"));
+                } else if (!whoStatus.isWar()) {
+                    event.setCancelled(true);
+                    who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "Turn off your Peaceful Mode if you want to attack them!"));
+                } else {
+                    if (!whoStatus.isCombat()) {
+                        who.sendMessage(plugin.formatMessage(ChatColor.RED + "You are currently Combat Tagged for attacking " + attacked.getName()));
+                        pluginStatus.get(whoUuid).setCombat(true);
+                        pluginStatus.get(whoUuid).setCombatCooldown(GlobalTime.COMBAT_TIMER.getTime());
+                    }
+                }
+            } else if (damager instanceof Arrow) {
+                Arrow arr = (Arrow) damager;
+                if (!containsBadArrowEffects(arr) && arr.getCustomEffects().size() != 0) {
+                    return;
+                }
+                ProjectileSource source = arr.getShooter();
+                if (!(source instanceof Player)) {
+                    return;
+                }
+                Player who = (Player) source;
+                UUID whoUuid = who.getUniqueId();
+                UUID attackedUuid = ent.getUniqueId();
+                if (whoUuid == attackedUuid) {
+                    return;
+                }
+                Map<UUID, PlayerStatus> pluginStatus = plugin.getStatus();
+                PlayerStatus whoStatus = pluginStatus.get(whoUuid);
+                PlayerStatus attackedStatus = pluginStatus.get(attackedUuid);
+                if (!attackedStatus.isWar()) {
+                    event.setCancelled(true);
+                    who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because they are in Peaceful Mode"));
+                } else if (!whoStatus.isWar()) {
+                    event.setCancelled(true);
+                    who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "Turn off your Peaceful Mode if you want to attack them!"));
+                } else {
+                    if (!whoStatus.isCombat()) {
+                        who.sendMessage(plugin.formatMessage(ChatColor.RED + "You are currently Combat Tagged for shooting " + ent.getName()));
+                        pluginStatus.get(whoUuid).setCombat(true);
+                        pluginStatus.get(whoUuid).setCombatCooldown(GlobalTime.COMBAT_TIMER.getTime());
+                    }
+                }
+                arr.remove();
+            } else if (damager instanceof Firework) {
+                Firework fw = (Firework) damager;
+                ProjectileSource source = fw.getShooter();
+                if (!(source instanceof Player)) {
+                    return;
+                }
+                Player who = (Player) source;
+                UUID whoUuid = who.getUniqueId();
+                UUID attackedUuid = ent.getUniqueId();
+                if (whoUuid == attackedUuid) {
+                    return;
+                }
+                Map<UUID, PlayerStatus> pluginStatus = plugin.getStatus();
+                PlayerStatus whoStatus = pluginStatus.get(whoUuid);
+                PlayerStatus attackedStatus = pluginStatus.get(attackedUuid);
+                if (!attackedStatus.isWar()) {
+                    event.setCancelled(true);
+                    who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "You cannot attack this player because they are in Peaceful Mode"));
+                } else if (!whoStatus.isWar()) {
+                    event.setCancelled(true);
+                    who.sendMessage(plugin.formatMessage(ChatColor.RED + "" + ChatColor.BOLD + "HEY!" + ChatColor.RESET + " " + ChatColor.RED + "Turn off your Peaceful Mode if you want to attack them!"));
+                } else {
+                    if (!whoStatus.isCombat()) {
+                        who.sendMessage(plugin.formatMessage(ChatColor.RED + "You are currently Combat Tagged for shooting " + ent.getName()));
+                        pluginStatus.get(whoUuid).setCombat(true);
+                        pluginStatus.get(whoUuid).setCombatCooldown(GlobalTime.COMBAT_TIMER.getTime());
+                    }
                 }
             }
         }
