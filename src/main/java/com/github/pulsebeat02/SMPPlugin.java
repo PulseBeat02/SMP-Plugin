@@ -10,14 +10,18 @@ import com.github.pulsebeat02.command.stalk.StalkCommandCompleter;
 import com.github.pulsebeat02.command.stalk.StalkCommandExecutor;
 import com.github.pulsebeat02.command.status.StatusCommandCompleter;
 import com.github.pulsebeat02.command.status.StatusCommandExecutor;
+import com.github.pulsebeat02.listener.OnePlayerSleepListener;
 import com.github.pulsebeat02.listener.PlayerAttackListener;
 import com.github.pulsebeat02.listener.PlayerDeathListener;
 import com.github.pulsebeat02.listener.PlayerServerJoinListener;
 import com.github.pulsebeat02.listener.WhisperCommandListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -36,6 +40,7 @@ public class SMPPlugin extends JavaPlugin {
     private Set<UUID> deathMessages;
     private Logger logger;
     private FileConfiguration config;
+    private World world;
 
     @Override
     public void onEnable() {
@@ -49,6 +54,7 @@ public class SMPPlugin extends JavaPlugin {
         loadTimers();
         loadListeners();
         loadCommands();
+        world = Bukkit.getWorld("world");
         long after = System.currentTimeMillis();
         logger.info(ChatColor.YELLOW + "SMP Plugin has Loaded (Took " + (after - before) + " Milliseconds)");
     }
@@ -64,23 +70,31 @@ public class SMPPlugin extends JavaPlugin {
     }
 
     public void loadCommands() {
-        getCommand("status").setExecutor(new StatusCommandExecutor(this));
-        getCommand("status").setTabCompleter(new StatusCommandCompleter());
-        getCommand("customdeathmessages").setExecutor(new CustomDeathMessageExecutor(this));
-        getCommand("customdeathmessages").setTabCompleter(new CustomDeathMessageCompleter());
-        getCommand("rules").setExecutor(new RulesCommandExecutor(this));
-        getCommand("map").setExecutor(new DynmapCommandExecutor(this));
-        getCommand("r").setExecutor(new ReplyCommandExecutor(this));
-        getCommand("r").setTabCompleter(new ReplyCommandCompleter(this));
-        getCommand("stalk").setExecutor(new StalkCommandExecutor(this));
-        getCommand("stalk").setTabCompleter(new StalkCommandCompleter());
+        PluginCommand status = getCommand("status");
+        PluginCommand customdeathmessages = getCommand("customdeathmessages");
+        PluginCommand rules = getCommand("rules");
+        PluginCommand map = getCommand("map");
+        PluginCommand reply = getCommand("r");
+        PluginCommand stalk = getCommand("stalk");
+        status.setExecutor(new StatusCommandExecutor(this));
+        status.setTabCompleter(new StatusCommandCompleter());
+        customdeathmessages.setExecutor(new CustomDeathMessageExecutor(this));
+        customdeathmessages.setTabCompleter(new CustomDeathMessageCompleter());
+        rules.setExecutor(new RulesCommandExecutor(this));
+        map.setExecutor(new DynmapCommandExecutor(this));
+        reply.setExecutor(new ReplyCommandExecutor(this));
+        reply.setTabCompleter(new ReplyCommandCompleter(this));
+        stalk.setExecutor(new StalkCommandExecutor(this));
+        stalk.setTabCompleter(new StalkCommandCompleter());
     }
 
     public void loadListeners() {
-        getServer().getPluginManager().registerEvents(new PlayerServerJoinListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerAttackListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
-        getServer().getPluginManager().registerEvents(new WhisperCommandListener(this), this);
+        PluginManager pg = getServer().getPluginManager();
+        pg.registerEvents(new PlayerServerJoinListener(this), this);
+        pg.registerEvents(new PlayerAttackListener(this), this);
+        pg.registerEvents(new PlayerDeathListener(this), this);
+        pg.registerEvents(new WhisperCommandListener(this), this);
+        pg.registerEvents(new OnePlayerSleepListener(this), this);
     }
 
     public void loadTimers() {
@@ -170,5 +184,7 @@ public class SMPPlugin extends JavaPlugin {
     public Set<UUID> getDeathMessages() {
         return deathMessages;
     }
+
+    public World getWorld() { return world; }
 
 }
