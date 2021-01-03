@@ -16,16 +16,16 @@ public class OnePlayerSleepListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
-    public void onPlayerBedEnter(final PlayerBedEnterEvent event) {
-        Player sleeping = event.getPlayer();
-        Bukkit.getServer().getScheduler().runTaskLater(plugin, () -> {
-            if (sleeping.isSleeping()) {
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.sendMessage(plugin.formatMessage(ChatColor.AQUA + "Wakey wakey rise shine, " + sleeping.getName() + " slept"));
-                }
-            }
-        }, 100L);
-    }
+//    @EventHandler
+//    public void onPlayerBedEnter(final PlayerBedEnterEvent event) {
+//        Player sleeping = event.getPlayer();
+//        Bukkit.getServer().getScheduler().runTaskLater(plugin, () -> {
+//            if (sleeping.isSleeping()) {
+//                for (Player p : Bukkit.getOnlinePlayers()) {
+//                    p.sendMessage(plugin.formatMessage(ChatColor.AQUA + "Wakey wakey rise shine, " + sleeping.getName() + " slept"));
+//                }
+//            }
+//        }, 100L);
+//    }
 
 }

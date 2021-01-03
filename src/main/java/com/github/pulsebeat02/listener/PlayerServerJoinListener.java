@@ -33,6 +33,7 @@ public class PlayerServerJoinListener implements Listener {
         } else {
             player.setDisplayName(player.getName() + ChatColor.BOLD + " " + ChatColor.AQUA + "[Peaceful]");
         }
+        player.setSleepingIgnored(true);
     }
 
 }
