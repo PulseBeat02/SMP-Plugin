@@ -14,6 +14,7 @@ import com.github.pulsebeat02.listener.OnePlayerSleepListener;
 import com.github.pulsebeat02.listener.PlayerAttackListener;
 import com.github.pulsebeat02.listener.PlayerDeathListener;
 import com.github.pulsebeat02.listener.PlayerServerJoinListener;
+import com.github.pulsebeat02.listener.PlayerServerLeaveListener;
 import com.github.pulsebeat02.listener.WhisperCommandListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -95,6 +96,7 @@ public class SMPPlugin extends JavaPlugin {
         pg.registerEvents(new PlayerDeathListener(this), this);
         pg.registerEvents(new WhisperCommandListener(this), this);
         pg.registerEvents(new OnePlayerSleepListener(this), this);
+        pg.registerEvents(new PlayerServerLeaveListener(this), this);
     }
 
     public void loadTimers() {

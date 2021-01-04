@@ -57,7 +57,7 @@ public class StatusCommandExecutor implements CommandExecutor {
                 return true;
             }
             if (status.isCombat()) {
-                sender.sendMessage(plugin.formatMessage(ChatColor.RED + "You cannot execute this command while combat tagged! (" + status.getCombatCooldown() / 1200 + " seconds left)"));
+                sender.sendMessage(plugin.formatMessage(ChatColor.RED + "You cannot execute this command while combat tagged! (" + status.getCombatCooldown() / 1200 + " minutes left)"));
                 return true;
             }
             String name = pl.getName();
