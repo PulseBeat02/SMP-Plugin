@@ -5,6 +5,7 @@ import com.github.pulsebeat02.command.death.CustomDeathMessageExecutor;
 import com.github.pulsebeat02.command.dynmap.DynmapCommandExecutor;
 import com.github.pulsebeat02.command.message.ReplyCommandCompleter;
 import com.github.pulsebeat02.command.message.ReplyCommandExecutor;
+import com.github.pulsebeat02.command.moderate.PigStepFinder;
 import com.github.pulsebeat02.command.rules.RulesCommandExecutor;
 import com.github.pulsebeat02.command.stalk.StalkCommandCompleter;
 import com.github.pulsebeat02.command.stalk.StalkCommandExecutor;
@@ -97,6 +98,7 @@ public class SMPPlugin extends JavaPlugin {
         pg.registerEvents(new WhisperCommandListener(this), this);
         pg.registerEvents(new OnePlayerSleepListener(this), this);
         pg.registerEvents(new PlayerServerLeaveListener(this), this);
+        pg.registerEvents(new PigStepFinder(), this);
     }
 
     public void loadTimers() {
