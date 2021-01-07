@@ -41,7 +41,6 @@ public class StalkCommandExecutor implements CommandExecutor {
                     }
                     pl.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Stalk Mode Activated, get them Haxers :D"));
                     stalk = true;
-                    return true;
                 } else {
                     pl.removePotionEffect(PotionEffectType.INVISIBILITY);
                     for (Player p : Bukkit.getOnlinePlayers()) {
@@ -49,8 +48,8 @@ public class StalkCommandExecutor implements CommandExecutor {
                     }
                     pl.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Stalk Mode Disabled, got anyone? D:"));
                     stalk = false;
-                    return true;
                 }
+                return true;
             } catch (NumberFormatException ex) {
                 pl.sendMessage(plugin.formatMessage(ChatColor.RED + "Value must be true or false"));
                 return true;

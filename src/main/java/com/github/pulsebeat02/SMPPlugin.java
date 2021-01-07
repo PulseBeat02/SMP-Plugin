@@ -11,6 +11,7 @@ import com.github.pulsebeat02.command.stalk.StalkCommandCompleter;
 import com.github.pulsebeat02.command.stalk.StalkCommandExecutor;
 import com.github.pulsebeat02.command.status.StatusCommandCompleter;
 import com.github.pulsebeat02.command.status.StatusCommandExecutor;
+import com.github.pulsebeat02.listener.EndEnterListener;
 import com.github.pulsebeat02.listener.OnePlayerSleepListener;
 import com.github.pulsebeat02.listener.PlayerAttackListener;
 import com.github.pulsebeat02.listener.PlayerDeathListener;
@@ -34,6 +35,8 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 public class SMPPlugin extends JavaPlugin {
+
+    private static boolean END_FIGHT_ENABLED;
 
     // true -> war
     // false -> peaceful
@@ -99,6 +102,7 @@ public class SMPPlugin extends JavaPlugin {
         pg.registerEvents(new OnePlayerSleepListener(this), this);
         pg.registerEvents(new PlayerServerLeaveListener(this), this);
         pg.registerEvents(new PigStepFinder(), this);
+        pg.registerEvents(new EndEnterListener(this), this);
     }
 
     public void loadTimers() {

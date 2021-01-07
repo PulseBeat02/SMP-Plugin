@@ -44,6 +44,10 @@ public class StatusCommandExecutor implements CommandExecutor {
             }
         } else {
             Player pl = (Player) sender;
+            if (pl.getLocation().getWorld().getName().equals("world_the_end")) {
+                pl.sendMessage(plugin.formatMessage(ChatColor.RED + "You cannot use this comamand while being in the End!"));
+                return true;
+            }
             UUID player = pl.getUniqueId();
             PlayerStatus status = pluginStatus.get(player);
             if (args.length == 0) {
