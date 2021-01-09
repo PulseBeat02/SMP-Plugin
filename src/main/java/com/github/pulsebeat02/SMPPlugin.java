@@ -20,7 +20,6 @@ import com.github.pulsebeat02.listener.PlayerServerLeaveListener;
 import com.github.pulsebeat02.listener.WhisperCommandListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -36,8 +35,6 @@ import java.util.logging.Logger;
 
 public class SMPPlugin extends JavaPlugin {
 
-    private static boolean END_FIGHT_ENABLED;
-
     // true -> war
     // false -> peaceful
     private Map<UUID, PlayerStatus> status;
@@ -45,21 +42,19 @@ public class SMPPlugin extends JavaPlugin {
     private Set<UUID> deathMessages;
     private Logger logger;
     private FileConfiguration config;
-    private World world;
 
     @Override
     public void onEnable() {
-        status = new HashMap<>();
-        this.messages = new HashMap<>();
-        deathMessages = new HashSet<>();
         logger = getLogger();
         logger.info(ChatColor.YELLOW + "SMP Plugin is Loading");
         long before = System.currentTimeMillis();
+        status = new HashMap<>();
+        messages = new HashMap<>();
+        deathMessages = new HashSet<>();
         loadConfig();
         loadTimers();
         loadListeners();
         loadCommands();
-        world = Bukkit.getWorld("world");
         long after = System.currentTimeMillis();
         logger.info(ChatColor.YELLOW + "SMP Plugin has Loaded (Took " + (after - before) + " Milliseconds)");
     }
@@ -192,7 +187,5 @@ public class SMPPlugin extends JavaPlugin {
     public Set<UUID> getDeathMessages() {
         return deathMessages;
     }
-
-    public World getWorld() { return world; }
 
 }
