@@ -31,7 +31,7 @@
                     <artifactSet>
                         <includes>
                             <include>com.github.sealedtx</include>
-                            <include>it.sauronsoftware</include>
+                            <include>com.alibaba</include>
                         </includes>
                     </artifactSet>
                     <relocations>
@@ -40,8 +40,8 @@
                             <shadedPattern>com.github.pulsebeat02.youtube</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>it.sauronsoftware</pattern>
-                            <shadedPattern>com.github.pulsebeat02.encoder</shadedPattern>
+                            <pattern>com.alibaba</pattern>
+                            <shadedPattern>com.github.pulsebeat02.json</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -66,6 +66,11 @@
             <version>1.0.2</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/jave-1.0.2.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.73</version>
         </dependency>
     </dependencies>
     <repositories>

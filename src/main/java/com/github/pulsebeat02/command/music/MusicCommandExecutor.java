@@ -45,7 +45,6 @@ public class MusicCommandExecutor implements CommandExecutor {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("stop")) {
                 track.stopMusic(sender);
-                sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Stopping the current track"));
             }
             return true;
         }

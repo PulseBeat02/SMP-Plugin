@@ -43,6 +43,7 @@ public class MusicTrackPlayer {
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			p.stopSound("audio");
 		}
+		sender.sendMessage(plugin.formatMessage(org.bukkit.ChatColor.RED + "Current track stopped"));
 	}
 
 	@Deprecated
