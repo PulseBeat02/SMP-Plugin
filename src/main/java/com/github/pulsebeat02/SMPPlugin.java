@@ -6,6 +6,7 @@ import com.github.pulsebeat02.command.dynmap.DynmapCommandExecutor;
 import com.github.pulsebeat02.command.message.ReplyCommandCompleter;
 import com.github.pulsebeat02.command.message.ReplyCommandExecutor;
 import com.github.pulsebeat02.command.moderate.PigStepFinder;
+import com.github.pulsebeat02.command.music.MusicCommandExecutor;
 import com.github.pulsebeat02.command.rules.RulesCommandExecutor;
 import com.github.pulsebeat02.command.stalk.StalkCommandCompleter;
 import com.github.pulsebeat02.command.stalk.StalkCommandExecutor;
@@ -42,6 +43,7 @@ public class SMPPlugin extends JavaPlugin {
     private Set<UUID> deathMessages;
     private Logger logger;
     private FileConfiguration config;
+    private HTTPServer server;
 
     @Override
     public void onEnable() {
@@ -76,6 +78,7 @@ public class SMPPlugin extends JavaPlugin {
         PluginCommand map = getCommand("map");
         PluginCommand reply = getCommand("r");
         PluginCommand stalk = getCommand("stalk");
+        PluginCommand music = getCommand("music");
         status.setExecutor(new StatusCommandExecutor(this));
         status.setTabCompleter(new StatusCommandCompleter());
         customdeathmessages.setExecutor(new CustomDeathMessageExecutor(this));
@@ -86,6 +89,7 @@ public class SMPPlugin extends JavaPlugin {
         reply.setTabCompleter(new ReplyCommandCompleter(this));
         stalk.setExecutor(new StalkCommandExecutor(this));
         stalk.setTabCompleter(new StalkCommandCompleter());
+        music.setExecutor(new MusicCommandExecutor(this));
     }
 
     public void loadListeners() {
@@ -187,5 +191,7 @@ public class SMPPlugin extends JavaPlugin {
     public Set<UUID> getDeathMessages() {
         return deathMessages;
     }
+
+    public HTTPServer getHTTPServer() { return server; }
 
 }
