@@ -198,7 +198,12 @@ public class SMPPlugin extends JavaPlugin {
     public Set<UUID> getDeathMessages() {
         return deathMessages;
     }
+
     public HTTPServer getHTTPServer() { return server; }
+
+    public void setHttpServer(final HTTPServer server) {
+        this.server = server;
+    }
 
     public int getPort() { return port; }
 

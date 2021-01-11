@@ -26,8 +26,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -36,18 +34,19 @@ import java.util.zip.ZipOutputStream;
 public class MusicTrackPlayer implements Listener {
 
     private final SMPPlugin plugin;
-    private final Set<Player> players;
     private boolean finished;
     private VideoDetails details;
 
     public MusicTrackPlayer(final SMPPlugin plugin) {
         this.plugin = plugin;
-        this.players = new HashSet<>();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     public void stopMusic(final CommandSender sender) {
-        plugin.getHTTPServer().terminate();
+        if (plugin.getHTTPServer().isRunning()) {
+            plugin.getHTTPServer().terminate();
+        }
+        plugin.setHttpServer(null);
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.stopSound("smpplugin");
         }
@@ -71,17 +70,12 @@ public class MusicTrackPlayer implements Listener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            HTTPServer server = plugin.getHTTPServer();
-            if (server != null && server.isAlive()) {
-                server.terminate();
-                server.stop();
-            }
             try {
-                server = new HTTPServer(plugin, plugin.getPort(), details);
+                plugin.setHttpServer(new HTTPServer(plugin, plugin.getPort(), details));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            server.start();
+            plugin.getHTTPServer().start();
             String ip = "http://" + plugin.getServer().getIp() + ":" + plugin.getPort() + "/resourcepack.zip";
             for (Player player : Bukkit.getOnlinePlayers()) {
                 player.sendMessage(ChatColor.AQUA + "Sending Resourcepack...");
@@ -97,7 +91,7 @@ public class MusicTrackPlayer implements Listener {
         finished = true;
     }
 
-    private byte[] createHash(final File file) throws Exception  {
+    private byte[] createHash(final File file) throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-1");
         InputStream fis = new FileInputStream(file);
         int n = 0;
@@ -112,7 +106,7 @@ public class MusicTrackPlayer implements Listener {
     }
 
     public void playMusic() {
-        for (Player p : players) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
             p.playSound(p.getLocation(), "smpplugin", 0.6F, 1.0F);
             p.sendMessage(ChatColor.GOLD + "=====================================");
             p.sendMessage(ChatColor.AQUA + "Now Playing: " + ChatColor.LIGHT_PURPLE + details.title());
@@ -120,20 +114,6 @@ public class MusicTrackPlayer implements Listener {
             p.sendMessage(ChatColor.AQUA + "Rating: " + ChatColor.LIGHT_PURPLE + details.averageRating());
             p.sendMessage(ChatColor.GOLD + "=====================================");
         }
-    }
-
-    @EventHandler
-    public void onResourcepackStatusEvent(final PlayerResourcePackStatusEvent event) {
-        switch (event.getStatus()) {
-            case SUCCESSFULLY_LOADED:
-                players.add(event.getPlayer());
-                break;
-            case FAILED_DOWNLOAD:
-            case DECLINED:
-                players.remove(event.getPlayer());
-                break;
-        }
-
     }
 
     private File[] getFiles(final CommandSender sender, final String url) throws Exception {
@@ -214,10 +194,6 @@ public class MusicTrackPlayer implements Listener {
 
     public VideoDetails getDetails() {
         return details;
-    }
-
-    public Set<Player> getListeners() {
-        return players;
     }
 
     public boolean finishedLoading() {

@@ -44,10 +44,6 @@ public class MusicCommandExecutor implements CommandExecutor {
             } else if (args[0].equalsIgnoreCase("play")) {
                 if (track.finishedLoading()) {
                     sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Playing Music"));
-                    sender.sendMessage(ChatColor.GOLD + "Current Listeners:");
-                    for (Player p : track.getListeners()) {
-                        sender.sendMessage(ChatColor.AQUA + "    - " + p.getName());
-                    }
                     track.playMusic();
                 } else {
                     sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Waiting for Audio to Parse!"));

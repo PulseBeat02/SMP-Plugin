@@ -13,6 +13,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.regex.Matcher;
@@ -46,12 +47,19 @@ public class HTTPServer extends Thread {
 	@Override
 	public void run() {
 		while (running) {
-			try {
-				new Thread(new MineConnection(this, socket.accept())).start();
-			} catch (IOException e) {
-				e.printStackTrace();
+			if (!socket.isClosed()) {
+				try {
+					new Thread(new MineConnection(this, socket.accept())).start();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
+		// just in case it's still open
+		closeSocket();
+	}
+
+	public void closeSocket() {
 		if (!socket.isClosed()) {
 			try {
 				socket.close();
@@ -145,5 +153,7 @@ public class HTTPServer extends Thread {
 	public VideoDetails getDetails() {
 		return details;
 	}
+
+	public boolean isRunning() { return running; }
 
 }
