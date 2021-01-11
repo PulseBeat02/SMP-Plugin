@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -48,10 +47,11 @@ public class MusicTrackPlayer implements Listener {
     }
 
     public void stopMusic(final CommandSender sender) {
+        plugin.getHTTPServer().terminate();
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.stopSound("smpplugin");
         }
-        sender.sendMessage(plugin.formatMessage(org.bukkit.ChatColor.RED + "Current track stopped"));
+        sender.sendMessage(plugin.formatMessage(org.bukkit.ChatColor.RED + "Current Track Stopped"));
     }
 
     @Deprecated
@@ -72,16 +72,15 @@ public class MusicTrackPlayer implements Listener {
                 e.printStackTrace();
             }
             HTTPServer server = plugin.getHTTPServer();
-            if (server != null) {
+            if (server != null && server.isAlive()) {
                 server.terminate();
+                server.stop();
             }
             try {
                 server = new HTTPServer(plugin, plugin.getPort(), details);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            assert server != null;
-            server.stop();
             server.start();
             String ip = "http://" + plugin.getServer().getIp() + ":" + plugin.getPort() + "/resourcepack.zip";
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -116,9 +115,9 @@ public class MusicTrackPlayer implements Listener {
         for (Player p : players) {
             p.playSound(p.getLocation(), "smpplugin", 0.6F, 1.0F);
             p.sendMessage(ChatColor.GOLD + "=====================================");
-            p.sendMessage(ChatColor.AQUA + "Now Playing: " + ChatColor.AQUA + details.title());
-            p.sendMessage(ChatColor.AQUA + "Author: " + ChatColor.AQUA + details.author());
-            p.sendMessage(ChatColor.AQUA + "Rating: " + ChatColor.AQUA + details.averageRating());
+            p.sendMessage(ChatColor.AQUA + "Now Playing: " + ChatColor.LIGHT_PURPLE + details.title());
+            p.sendMessage(ChatColor.AQUA + "Author: " + ChatColor.LIGHT_PURPLE + details.author());
+            p.sendMessage(ChatColor.AQUA + "Rating: " + ChatColor.LIGHT_PURPLE + details.averageRating());
             p.sendMessage(ChatColor.GOLD + "=====================================");
         }
     }
@@ -165,10 +164,10 @@ public class MusicTrackPlayer implements Listener {
             details = video.details();
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.sendMessage(ChatColor.GOLD + "=====================================");
-                p.sendMessage(ChatColor.AQUA + "Now Playing: " + ChatColor.AQUA + details.title());
-                p.sendMessage(ChatColor.AQUA + "Author: " + ChatColor.AQUA + details.author());
-                p.sendMessage(ChatColor.AQUA + "Rating: " + ChatColor.AQUA + details.averageRating());
-                p.sendMessage(ChatColor.AQUA + "Description: " + ChatColor.AQUA + details.description());
+                p.sendMessage(ChatColor.AQUA + "Now Playing: " + ChatColor.LIGHT_PURPLE + details.title());
+                p.sendMessage(ChatColor.AQUA + "Author: " + ChatColor.LIGHT_PURPLE + details.author());
+                p.sendMessage(ChatColor.AQUA + "Rating: " + ChatColor.LIGHT_PURPLE + details.averageRating());
+                p.sendMessage(ChatColor.AQUA + "Description: " + ChatColor.LIGHT_PURPLE + details.description());
                 p.sendMessage(ChatColor.GOLD + "=====================================");
             }
             File outputDir = new File(plugin.getDataFolder().getAbsolutePath());

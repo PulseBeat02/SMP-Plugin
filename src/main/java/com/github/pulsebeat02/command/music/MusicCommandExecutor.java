@@ -31,9 +31,9 @@ public class MusicCommandExecutor implements CommandExecutor {
                 sender.sendMessage(plugin.formatMessage(ChatColor.RED + "No Songs Currently Playing!"));
             } else {
                 sender.sendMessage(ChatColor.GOLD + "=====================================");
-                sender.sendMessage(ChatColor.AQUA + "Now Playing: " + ChatColor.AQUA + details.title());
-                sender.sendMessage(ChatColor.AQUA + "Author: " + ChatColor.AQUA + details.author());
-                sender.sendMessage(ChatColor.AQUA + "Rating: " + ChatColor.AQUA + details.averageRating());
+                sender.sendMessage(ChatColor.AQUA + "Now Playing: " + ChatColor.LIGHT_PURPLE + details.title());
+                sender.sendMessage(ChatColor.AQUA + "Author: " + ChatColor.LIGHT_PURPLE + details.author());
+                sender.sendMessage(ChatColor.AQUA + "Rating: " + ChatColor.LIGHT_PURPLE + details.averageRating());
                 sender.sendMessage(ChatColor.GOLD + "=====================================");
             }
             return true;
@@ -50,7 +50,7 @@ public class MusicCommandExecutor implements CommandExecutor {
                     }
                     track.playMusic();
                 } else {
-                    sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Wait for the Audio to Parse!"));
+                    sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Waiting for Audio to Parse!"));
                 }
             }
             return true;
