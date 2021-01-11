@@ -82,7 +82,7 @@ public class MusicTrackPlayer implements Listener {
                 try {
                     byte[] hash = createHash(new File(plugin.getDataFolder().getAbsolutePath() + "/resourcepack.zip"));
                     System.out.println(new String(hash));
-                    player.setResourcePack(ip, hash);
+                    player.setResourcePack(ip);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
