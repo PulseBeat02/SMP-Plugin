@@ -1,6 +1,7 @@
 package com.github.pulsebeat02.command.music;
 
 import com.github.kiulian.downloader.model.VideoDetails;
+import com.github.pulsebeat02.HTTPServer;
 import com.github.pulsebeat02.SMPPlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -56,6 +57,10 @@ public class MusicCommandExecutor implements CommandExecutor {
         }
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("load")) {
+                HTTPServer server = plugin.getHTTPServer();
+                if (server != null) {
+                    server.terminate();
+                }
                 track = new MusicTrackPlayer(plugin);
                 try {
                     sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Attempting to Load Track..."));

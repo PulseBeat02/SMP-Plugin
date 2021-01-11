@@ -70,6 +70,9 @@ public class SMPPlugin extends JavaPlugin {
         long before = System.currentTimeMillis();
         writeConfig();
         saveConfig();
+        if (server != null && server.isAlive()) {
+            server.terminate();
+        }
         long after = System.currentTimeMillis();
         logger.info(ChatColor.YELLOW + "SMP Plugin has Shut Down (Took " + (after - before) + " Milliseconds)");
     }
@@ -195,7 +198,6 @@ public class SMPPlugin extends JavaPlugin {
     public Set<UUID> getDeathMessages() {
         return deathMessages;
     }
-
     public HTTPServer getHTTPServer() { return server; }
 
     public int getPort() { return port; }

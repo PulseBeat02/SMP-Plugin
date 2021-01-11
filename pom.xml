@@ -34,6 +34,9 @@
                             <include>com.alibaba</include>
                             <include>ws.schild</include>
                         </includes>
+                        <excludes>
+
+                        </excludes>
                     </artifactSet>
                     <relocations>
                         <relocation>
@@ -76,6 +79,29 @@
             <version>1.2.73</version>
         </dependency>
     </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ws.schild</groupId>
+                <artifactId>jave-all-deps</artifactId>
+                <version>2.7.3</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>ws.schild</groupId>
+                        <artifactId>jave-nativebin-win32</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>ws.schild</groupId>
+                        <artifactId>jave-nativebin-linux32</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>ws.schild</groupId>
+                        <artifactId>jave-nativebin-osx64</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <repositories>
         <repository>
             <id>papermc</id>

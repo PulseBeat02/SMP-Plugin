@@ -48,14 +48,8 @@ public class MusicTrackPlayer implements Listener {
     }
 
     public void stopMusic(final CommandSender sender) {
-        HTTPServer server = plugin.getHTTPServer();
-        if (server == null) {
-            sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Track not playing!"));
-            return;
-        }
-        server.terminate();
         for (Player p : Bukkit.getOnlinePlayers()) {
-            p.stopSound("audio");
+            p.stopSound("smpplugin");
         }
         sender.sendMessage(plugin.formatMessage(org.bukkit.ChatColor.RED + "Current track stopped"));
     }
@@ -78,27 +72,24 @@ public class MusicTrackPlayer implements Listener {
                 e.printStackTrace();
             }
             HTTPServer server = plugin.getHTTPServer();
-            if (server == null) {
-                try {
-                    server = new HTTPServer(plugin, plugin.getPort(), details);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                assert server != null;
-            } else {
+            if (server != null) {
                 server.terminate();
-                try {
-                    server = new HTTPServer(plugin, plugin.getPort(), details);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
+            try {
+                server = new HTTPServer(plugin, plugin.getPort(), details);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            assert server != null;
+            server.stop();
             server.start();
             String ip = "http://" + plugin.getServer().getIp() + ":" + plugin.getPort() + "/resourcepack.zip";
             for (Player player : Bukkit.getOnlinePlayers()) {
                 player.sendMessage(ChatColor.AQUA + "Sending Resourcepack...");
                 try {
-                    player.setResourcePack(ip, createHash(new File(plugin.getDataFolder().getAbsolutePath() + "/resourcepack.zip")));
+                    byte[] hash = createHash(new File(plugin.getDataFolder().getAbsolutePath() + "/resourcepack.zip"));
+                    System.out.println(new String(hash));
+                    player.setResourcePack(ip, hash);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -123,7 +114,7 @@ public class MusicTrackPlayer implements Listener {
 
     public void playMusic() {
         for (Player p : players) {
-            p.playSound(p.getLocation(), "audio", 1.0F, 1.0F);
+            p.playSound(p.getLocation(), "smpplugin", 0.6F, 1.0F);
             p.sendMessage(ChatColor.GOLD + "=====================================");
             p.sendMessage(ChatColor.AQUA + "Now Playing: " + ChatColor.AQUA + details.title());
             p.sendMessage(ChatColor.AQUA + "Author: " + ChatColor.AQUA + details.author());
@@ -134,9 +125,16 @@ public class MusicTrackPlayer implements Listener {
 
     @EventHandler
     public void onResourcepackStatusEvent(final PlayerResourcePackStatusEvent event) {
-        if (event.getStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED) {
-            players.add(event.getPlayer());
+        switch (event.getStatus()) {
+            case SUCCESSFULLY_LOADED:
+                players.add(event.getPlayer());
+                break;
+            case FAILED_DOWNLOAD:
+            case DECLINED:
+                players.remove(event.getPlayer());
+                break;
         }
+
     }
 
     private File[] getFiles(final CommandSender sender, final String url) throws Exception {
@@ -150,6 +148,7 @@ public class MusicTrackPlayer implements Listener {
         audio.setBitRate(160000);
         audio.setChannels(2);
         audio.setSamplingRate(44100);
+        audio.setVolume(48);
         EncodingAttributes attrs = new EncodingAttributes();
         attrs.setFormat("ogg");
         attrs.setAudioAttributes(audio);
@@ -201,7 +200,7 @@ public class MusicTrackPlayer implements Listener {
         out.putNextEntry(config);
         out.write(mcmeta);
         out.closeEntry();
-        byte[] soundJSON = ("{\r\n" + "   \"minecraftvideo\":{\r\n" + "      \"sounds\":[\r\n"
+        byte[] soundJSON = ("{\r\n" + "   \"smpplugin\":{\r\n" + "      \"sounds\":[\r\n"
                 + "         \"audio\"\r\n" + "      ]\r\n" + "   }\r\n" + "}").getBytes();
         ZipEntry sound = new ZipEntry("assets/minecraft/sounds.json");
         out.putNextEntry(sound);
