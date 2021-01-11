@@ -29,30 +29,37 @@ public class MusicCommandExecutor implements CommandExecutor {
             if (details == null) {
                 sender.sendMessage(plugin.formatMessage(ChatColor.RED + "No Songs Currently Playing!"));
             } else {
-                sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "====================================="));
-                sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Now Playing: " + ChatColor.AQUA + details.title()));
-                sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Author: " + ChatColor.AQUA + details.author()));
-                sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Rating: " + ChatColor.AQUA + details.averageRating()));
-                sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Description: " + ChatColor.AQUA + details.description()));
-                sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "====================================="));
+                sender.sendMessage(ChatColor.GOLD + "=====================================");
+                sender.sendMessage(ChatColor.AQUA + "Now Playing: " + ChatColor.AQUA + details.title());
+                sender.sendMessage(ChatColor.AQUA + "Author: " + ChatColor.AQUA + details.author());
+                sender.sendMessage(ChatColor.AQUA + "Rating: " + ChatColor.AQUA + details.averageRating());
+                sender.sendMessage(ChatColor.GOLD + "=====================================");
             }
-            return true;
-        }
-        if (!sender.isOp()) {
-            plugin.formatMessage(ChatColor.RED + "Tell PulseBeat_02 what songs to play");
             return true;
         }
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("stop")) {
                 track.stopMusic(sender);
+            } else if (args[0].equalsIgnoreCase("play")) {
+                if (track.finishedLoading()) {
+                    sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Playing Music"));
+                    sender.sendMessage(ChatColor.GOLD + "Current Listeners:");
+                    for (Player p : track.getListeners()) {
+                        sender.sendMessage(ChatColor.AQUA + "    - " + p.getName());
+                    }
+                    track.playMusic();
+                } else {
+                    sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Wait for the Audio to Parse!"));
+                }
             }
             return true;
         }
         if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("play")) {
+            if (args[0].equalsIgnoreCase("load")) {
+                track = new MusicTrackPlayer(plugin);
                 try {
-                    track.playMusic(args[1]);
-                    sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Playing the current track"));
+                    sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Attempting to Load Track..."));
+                    track.loadMusic(sender, args[1]);
                 } catch (Exception e) {
                     sender.sendMessage(plugin.formatMessage(ChatColor.RED + "An Exception has Occurred"));
                     e.printStackTrace();

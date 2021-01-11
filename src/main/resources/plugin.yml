@@ -33,7 +33,7 @@ commands:
   music:
     description: Allows you to play Music (Youtube URLs)
     permission: smp.music
-    usage: "/music stop | /music play [url]"
+    usage: "/music stop | /music load [url] | /smp play"
 permissions:
   smp.status:
     description: Allows the user to set their status
@@ -55,7 +55,4 @@ permissions:
     default: op
   smp.music:
     description: Allows the user to play music
-    default: op
-  smp.*:
-    description: Allows access to all commands
     default: op

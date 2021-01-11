@@ -6,141 +6,224 @@ import com.github.kiulian.downloader.model.VideoDetails;
 import com.github.kiulian.downloader.model.YoutubeVideo;
 import com.github.pulsebeat02.HTTPServer;
 import com.github.pulsebeat02.SMPPlugin;
-import it.sauronsoftware.jave.AudioAttributes;
-import it.sauronsoftware.jave.Encoder;
-import it.sauronsoftware.jave.EncodingAttributes;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent;
+import ws.schild.jave.AudioAttributes;
+import ws.schild.jave.Encoder;
+import ws.schild.jave.EncodingAttributes;
+import ws.schild.jave.MultimediaObject;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-public class MusicTrackPlayer {
+public class MusicTrackPlayer implements Listener {
 
-	private final SMPPlugin plugin;
-	private VideoDetails details;
+    private final SMPPlugin plugin;
+    private final Set<Player> players;
+    private boolean finished;
+    private VideoDetails details;
 
-	public MusicTrackPlayer(final SMPPlugin plugin) {
-		this.plugin = plugin;
-	}
+    public MusicTrackPlayer(final SMPPlugin plugin) {
+        this.plugin = plugin;
+        this.players = new HashSet<>();
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    }
 
-	public void stopMusic(final CommandSender sender) {
-		HTTPServer server = plugin.getHTTPServer();
-		if (server == null) {
-			sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Track not playing!"));
-			return;
-		}
-		server.terminate();
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			p.stopSound("audio");
-		}
-		sender.sendMessage(plugin.formatMessage(org.bukkit.ChatColor.RED + "Current track stopped"));
-	}
-
-	@Deprecated
-	public void playMusic(final String url) throws Exception {
-		File[] files = getFiles(url);
-		createEmptyZipFile(new VideoResource(files[0], files[1]));
-		HTTPServer server = plugin.getHTTPServer();
+    public void stopMusic(final CommandSender sender) {
+        HTTPServer server = plugin.getHTTPServer();
         if (server == null) {
-			server = new HTTPServer(plugin, 1334, details);
-			server.start();
-		} else {
-			server.terminate();
-			server = new HTTPServer(plugin, 1334, details);
-			server.start();
-		}
-		String ip = "http://" + plugin.getServer().getIp() + ":" + 1334 + "/resourcepack.zip";
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			player.sendMessage(ChatColor.AQUA + "Sending Resourcepack...");
-			player.setResourcePack(ip);
-		}
-	}
+            sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Track not playing!"));
+            return;
+        }
+        server.terminate();
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.stopSound("audio");
+        }
+        sender.sendMessage(plugin.formatMessage(org.bukkit.ChatColor.RED + "Current track stopped"));
+    }
 
-	private File[] getFiles(final String url) throws Exception {
-		File video = downloadVideo(url);
-		assert video != null;
-		File sound = new File(video.getParentFile() + "/audio.ogg");
-		AudioAttributes audio = new AudioAttributes();
-		audio.setCodec("libvorbis");
-		audio.setBitRate(160000);
-		audio.setChannels(2);
-		audio.setSamplingRate(44100);
-		EncodingAttributes attrs = new EncodingAttributes();
-		attrs.setFormat("ogg");
-		attrs.setAudioAttributes(audio);
-		Encoder encoder = new Encoder();
-		encoder.encode(video, sound, attrs);
-		return new File[] { video, sound };
-	}
+    @Deprecated
+    public void loadMusic(final CommandSender sender, final String url) {
+        new Thread(() -> {
+            File[] files = new File[0];
+            try {
+                files = getFiles(sender, url);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (files == null) {
+                return;
+            }
+            try {
+                createEmptyZipFile(new VideoResource(files[0], files[1]));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            HTTPServer server = plugin.getHTTPServer();
+            if (server == null) {
+                try {
+                    server = new HTTPServer(plugin, plugin.getPort(), details);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                assert server != null;
+            } else {
+                server.terminate();
+                try {
+                    server = new HTTPServer(plugin, plugin.getPort(), details);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            server.start();
+            String ip = "http://" + plugin.getServer().getIp() + ":" + plugin.getPort() + "/resourcepack.zip";
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.sendMessage(ChatColor.AQUA + "Sending Resourcepack...");
+                try {
+                    player.setResourcePack(ip, createHash(new File(plugin.getDataFolder().getAbsolutePath() + "/resourcepack.zip")));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        finished = true;
+    }
 
-	private File downloadVideo(final String url) throws IOException, YoutubeException {
-		YoutubeDownloader downloader = new YoutubeDownloader();
-		String ID = getVideoId(url);
-		if (ID != null) {
-			YoutubeVideo video = downloader.getVideo(ID);
-			details = video.details();
-			for (Player p : Bukkit.getOnlinePlayers()) {
-				p.sendMessage(ChatColor.GOLD + "=====================================");
-				p.sendMessage(ChatColor.RED + "Now Playing: " + ChatColor.AQUA + details.title());
-				p.sendMessage(ChatColor.RED + "Author: " + ChatColor.AQUA + details.author());
-				p.sendMessage(ChatColor.RED + "Rating: " + ChatColor.AQUA + details.averageRating());
-				p.sendMessage(ChatColor.RED + "Description: " + ChatColor.AQUA + details.description());
-				p.sendMessage(ChatColor.GOLD + "=====================================");
-			}
-			File outputDir = new File(plugin.getDataFolder().getAbsolutePath());
-			return video.download(video.videoWithAudioFormats().get(0), outputDir, "video", true);
-		} else {
-			return null;
-		}
-	}
+    private byte[] createHash(final File file) throws Exception  {
+        MessageDigest digest = MessageDigest.getInstance("SHA-1");
+        InputStream fis = new FileInputStream(file);
+        int n = 0;
+        byte[] buffer = new byte[8192];
+        while (n != -1) {
+            n = fis.read(buffer);
+            if (n > 0) {
+                digest.update(buffer, 0, n);
+            }
+        }
+        return digest.digest();
+    }
 
-	private String getVideoId(final String url) {
-		String pattern = "(?<=youtu.be/|watch\\?v=|/videos/|embed)[^#]*";
-		Pattern compiledPattern = Pattern.compile(pattern);
-		Matcher matcher = compiledPattern.matcher(url);
-		if (matcher.find()) {
-			return matcher.group();
-		} else {
-			System.out.println("Invalid Youtube URL Found!");
-		}
-		return null;
-	}
+    public void playMusic() {
+        for (Player p : players) {
+            p.playSound(p.getLocation(), "audio", 1.0F, 1.0F);
+            p.sendMessage(ChatColor.GOLD + "=====================================");
+            p.sendMessage(ChatColor.AQUA + "Now Playing: " + ChatColor.AQUA + details.title());
+            p.sendMessage(ChatColor.AQUA + "Author: " + ChatColor.AQUA + details.author());
+            p.sendMessage(ChatColor.AQUA + "Rating: " + ChatColor.AQUA + details.averageRating());
+            p.sendMessage(ChatColor.GOLD + "=====================================");
+        }
+    }
 
-	private void createEmptyZipFile(final VideoResource v) throws IOException {
-		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
-				plugin.getDataFolder().getAbsolutePath() + "/resourcepack.zip"));
-		byte[] mcmeta = ("{\r\n" + "	\"pack\": {\r\n" + "    \"pack_format\": 6,\r\n"
-				+ "    \"description\": \"Custom Server Resourcepack for MinecraftVideo\"\r\n" + "  }\r\n" + "}")
-				.getBytes();
-		ZipEntry config = new ZipEntry("pack.mcmeta");
-		out.putNextEntry(config);
-		out.write(mcmeta);
-		out.closeEntry();
-		byte[] soundJSON = ("{\r\n" + "   \"minecraftvideo\":{\r\n" + "      \"sounds\":[\r\n"
-				+ "         \"audio\"\r\n" + "      ]\r\n" + "   }\r\n" + "}").getBytes();
-		ZipEntry sound = new ZipEntry("assets/minecraft/sounds.json");
-		out.putNextEntry(sound);
-		out.write(soundJSON);
-		out.closeEntry();
-		ZipEntry soundFile = new ZipEntry("assets/minecraft/sounds/audio.ogg");
-		out.putNextEntry(soundFile);
-		out.write(Files.readAllBytes(Paths.get(v.getSound().getAbsolutePath())));
-		out.closeEntry();
-		out.close();
-	}
+    @EventHandler
+    public void onResourcepackStatusEvent(final PlayerResourcePackStatusEvent event) {
+        if (event.getStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED) {
+            players.add(event.getPlayer());
+        }
+    }
 
-	public VideoDetails getDetails() {
-		return details;
-	}
+    private File[] getFiles(final CommandSender sender, final String url) throws Exception {
+        File source = downloadVideo(sender, url);
+        if (source == null) {
+            return null;
+        }
+        File sound = new File(source.getParentFile() + "/audio.ogg");
+        AudioAttributes audio = new AudioAttributes();
+        audio.setCodec("libvorbis");
+        audio.setBitRate(160000);
+        audio.setChannels(2);
+        audio.setSamplingRate(44100);
+        EncodingAttributes attrs = new EncodingAttributes();
+        attrs.setFormat("ogg");
+        attrs.setAudioAttributes(audio);
+        Encoder encoder = new Encoder();
+        encoder.encode(new MultimediaObject(source), sound, attrs);
+        return new File[]{source, sound};
+    }
+
+    private File downloadVideo(final CommandSender sender, final String url) throws IOException, YoutubeException {
+        YoutubeDownloader downloader = new YoutubeDownloader();
+        String ID = getVideoId(sender, url);
+        if (ID != null) {
+            YoutubeVideo video = downloader.getVideo(ID);
+            details = video.details();
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                p.sendMessage(ChatColor.GOLD + "=====================================");
+                p.sendMessage(ChatColor.AQUA + "Now Playing: " + ChatColor.AQUA + details.title());
+                p.sendMessage(ChatColor.AQUA + "Author: " + ChatColor.AQUA + details.author());
+                p.sendMessage(ChatColor.AQUA + "Rating: " + ChatColor.AQUA + details.averageRating());
+                p.sendMessage(ChatColor.AQUA + "Description: " + ChatColor.AQUA + details.description());
+                p.sendMessage(ChatColor.GOLD + "=====================================");
+            }
+            File outputDir = new File(plugin.getDataFolder().getAbsolutePath());
+            return video.download(video.videoWithAudioFormats().get(0), outputDir, "video", true);
+        } else {
+            return null;
+        }
+    }
+
+    private String getVideoId(final CommandSender sender, final String url) {
+        String pattern = "(?<=youtu.be/|watch\\?v=|/videos/|embed)[^#]*";
+        Pattern compiledPattern = Pattern.compile(pattern);
+        Matcher matcher = compiledPattern.matcher(url);
+        if (matcher.find()) {
+            return matcher.group();
+        } else {
+            sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Invalid Youtube URL"));
+        }
+        return null;
+    }
+
+    private void createEmptyZipFile(final VideoResource v) throws IOException {
+        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
+                plugin.getDataFolder().getAbsolutePath() + "/resourcepack.zip"));
+        byte[] mcmeta = ("{\r\n" + "	\"pack\": {\r\n" + "    \"pack_format\": 6,\r\n"
+                + "    \"description\": \"Custom Server Resourcepack for MinecraftVideo\"\r\n" + "  }\r\n" + "}")
+                .getBytes();
+        ZipEntry config = new ZipEntry("pack.mcmeta");
+        out.putNextEntry(config);
+        out.write(mcmeta);
+        out.closeEntry();
+        byte[] soundJSON = ("{\r\n" + "   \"minecraftvideo\":{\r\n" + "      \"sounds\":[\r\n"
+                + "         \"audio\"\r\n" + "      ]\r\n" + "   }\r\n" + "}").getBytes();
+        ZipEntry sound = new ZipEntry("assets/minecraft/sounds.json");
+        out.putNextEntry(sound);
+        out.write(soundJSON);
+        out.closeEntry();
+        ZipEntry soundFile = new ZipEntry("assets/minecraft/sounds/audio.ogg");
+        out.putNextEntry(soundFile);
+        out.write(Files.readAllBytes(Paths.get(v.getSound().getAbsolutePath())));
+        out.closeEntry();
+        out.close();
+    }
+
+    public VideoDetails getDetails() {
+        return details;
+    }
+
+    public Set<Player> getListeners() {
+        return players;
+    }
+
+    public boolean finishedLoading() {
+        return finished;
+    }
 
 }

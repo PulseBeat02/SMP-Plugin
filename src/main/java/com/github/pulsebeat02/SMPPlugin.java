@@ -6,6 +6,7 @@ import com.github.pulsebeat02.command.dynmap.DynmapCommandExecutor;
 import com.github.pulsebeat02.command.message.ReplyCommandCompleter;
 import com.github.pulsebeat02.command.message.ReplyCommandExecutor;
 import com.github.pulsebeat02.command.moderate.PigStepFinder;
+import com.github.pulsebeat02.command.music.MusicCommandCompleter;
 import com.github.pulsebeat02.command.music.MusicCommandExecutor;
 import com.github.pulsebeat02.command.rules.RulesCommandExecutor;
 import com.github.pulsebeat02.command.stalk.StalkCommandCompleter;
@@ -44,6 +45,7 @@ public class SMPPlugin extends JavaPlugin {
     private Logger logger;
     private FileConfiguration config;
     private HTTPServer server;
+    private int port;
 
     @Override
     public void onEnable() {
@@ -53,6 +55,7 @@ public class SMPPlugin extends JavaPlugin {
         status = new HashMap<>();
         messages = new HashMap<>();
         deathMessages = new HashSet<>();
+        port = 1334;
         loadConfig();
         loadTimers();
         loadListeners();
@@ -90,6 +93,7 @@ public class SMPPlugin extends JavaPlugin {
         stalk.setExecutor(new StalkCommandExecutor(this));
         stalk.setTabCompleter(new StalkCommandCompleter());
         music.setExecutor(new MusicCommandExecutor(this));
+        music.setTabCompleter(new MusicCommandCompleter());
     }
 
     public void loadListeners() {
@@ -193,5 +197,7 @@ public class SMPPlugin extends JavaPlugin {
     }
 
     public HTTPServer getHTTPServer() { return server; }
+
+    public int getPort() { return port; }
 
 }

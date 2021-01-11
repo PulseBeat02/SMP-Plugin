@@ -32,6 +32,7 @@
                         <includes>
                             <include>com.github.sealedtx</include>
                             <include>com.alibaba</include>
+                            <include>ws.schild</include>
                         </includes>
                     </artifactSet>
                     <relocations>
@@ -42,6 +43,10 @@
                         <relocation>
                             <pattern>com.alibaba</pattern>
                             <shadedPattern>com.github.pulsebeat02.json</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>ws.schild</pattern>
+                            <shadedPattern>com.github.pulsebeat02.encoding</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -61,11 +66,9 @@
             <version>2.4.6</version>
         </dependency>
         <dependency>
-            <groupId>it.sauronsoftware</groupId>
-            <artifactId>jave</artifactId>
-            <version>1.0.2</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/jave-1.0.2.jar</systemPath>
+            <groupId>ws.schild</groupId>
+            <artifactId>jave-all-deps</artifactId>
+            <version>2.7.3</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
