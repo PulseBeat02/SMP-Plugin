@@ -28,48 +28,43 @@ import java.util.regex.Pattern;
 public class HTTPServer extends Thread {
 
     private final SMPPlugin plugin;
-    private final VideoDetails details;
 
     private volatile boolean running = true;
 
     protected final int port;
     protected final ServerSocket socket;
 
-    public HTTPServer(final SMPPlugin plugin, final int port, final VideoDetails details) throws IOException {
+    public HTTPServer(final SMPPlugin plugin, final int port) throws IOException {
         this.plugin = plugin;
         this.port = port;
         this.socket = new ServerSocket(port);
         this.socket.setReuseAddress(true);
-        this.details = details;
     }
 
     @Override
     public void run() {
         while (running) {
             try {
+                Socket s = null;
                 if (!socket.isClosed()) {
-                    new Thread(new MineConnection(this, socket.accept())).start();
+                    s = socket.accept();
+                }
+                if (s != null) {
+                    new Thread(new MineConnection(this, s)).start();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        // just in case it's still open
         closeSocket();
-    }
-
-    public void closeSocket() {
-        if (!socket.isClosed()) {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public void terminate() {
         running = false;
+        closeSocket();
+    }
+
+    public void closeSocket() {
         if (!socket.isClosed()) {
             try {
                 socket.close();
@@ -85,11 +80,12 @@ public class HTTPServer extends Thread {
      * @param request The path to the file requested
      * @return A file to return to them; null if the file they requested is invalid
      */
-    public File requestFileCallback(String request) {
+    public File requestFileCallback(final String request) {
         return new File(plugin.getDataFolder().getAbsolutePath(), request);
     }
 
     public class MineConnection implements Runnable {
+
         protected final HTTPServer server;
         protected final Socket client;
 
@@ -106,7 +102,6 @@ public class HTTPServer extends Thread {
                 PrintWriter pout = new PrintWriter(new OutputStreamWriter(out, "8859_1"), true);
                 String request = in.readLine();
                 System.out.println("Recieved request '" + request + "' from " + client.getInetAddress().toString());
-
                 Matcher get = Pattern.compile("GET /?(\\S*).*").matcher(request);
                 if (get.matches()) {
                     request = get.group(1);
@@ -116,12 +111,9 @@ public class HTTPServer extends Thread {
                     } else {
                         System.out.println("Request '" + request + "' is being served to " + client.getInetAddress());
                         try {
-                            // Writes zip files specifically; Designed for resource pack hosting
-
                             Calendar c = Calendar.getInstance();
                             SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
                             String GMTSTRING = df.format(c.getTime()) + " GMT";
-
                             out.write("HTTP/1.0 200 OK\r\n".getBytes());
                             out.write("Content-Type: application/zip\r\n".getBytes());
                             out.write(("Content-Length: " + result.length() + "\r\n").getBytes());
@@ -147,10 +139,6 @@ public class HTTPServer extends Thread {
                 System.out.println("I/O error " + e);
             }
         }
-    }
-
-    public VideoDetails getDetails() {
-        return details;
     }
 
     public boolean isRunning() {

@@ -10,9 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import ws.schild.jave.AudioAttributes;
 import ws.schild.jave.Encoder;
 import ws.schild.jave.EncodingAttributes;
@@ -26,6 +24,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -34,27 +34,43 @@ import java.util.zip.ZipOutputStream;
 public class MusicTrackPlayer implements Listener {
 
     private final SMPPlugin plugin;
+    private String uuid;
     private boolean finished;
     private VideoDetails details;
 
     public MusicTrackPlayer(final SMPPlugin plugin) {
         this.plugin = plugin;
+        this.uuid = generateRandomUUID();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     public void stopMusic(final CommandSender sender) {
-        if (plugin.getHTTPServer().isRunning()) {
-            plugin.getHTTPServer().terminate();
-        }
-        plugin.setHttpServer(null);
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.stopSound("smpplugin");
         }
         sender.sendMessage(plugin.formatMessage(org.bukkit.ChatColor.RED + "Current Track Stopped"));
     }
 
-    @Deprecated
     public void loadMusic(final CommandSender sender, final String url) {
+        stopMusic(sender);
+        uuid = generateRandomUUID();
+        new Thread(() -> {
+            if (plugin.getHTTPServer() == null) {
+                try {
+                    plugin.setHttpServer(new HTTPServer(plugin, plugin.getPort()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                plugin.getHTTPServer().start();
+            }
+        }).start();
+        new Thread(() -> {
+            for (File f : Objects.requireNonNull(plugin.getDataFolder().listFiles())) {
+                if (f.getName().endsWith(".zip")) {
+                    f.delete();
+                }
+            }
+        }).start();
         new Thread(() -> {
             File[] files = new File[0];
             try {
@@ -70,25 +86,22 @@ public class MusicTrackPlayer implements Listener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            try {
-                plugin.setHttpServer(new HTTPServer(plugin, plugin.getPort(), details));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            plugin.getHTTPServer().start();
-            String ip = "http://" + plugin.getServer().getIp() + ":" + plugin.getPort() + "/resourcepack.zip";
+            String ip = "http://" + plugin.getServer().getIp() + ":" + plugin.getPort() + "/" + uuid + ".zip";
             for (Player player : Bukkit.getOnlinePlayers()) {
                 player.sendMessage(ChatColor.AQUA + "Sending Resourcepack...");
                 try {
-                    byte[] hash = createHash(new File(plugin.getDataFolder().getAbsolutePath() + "/resourcepack.zip"));
-                    System.out.println(new String(hash));
-                    player.setResourcePack(ip);
+                    byte[] hash = createHash(new File(plugin.getDataFolder().getAbsolutePath() + "/" + uuid + ".zip"));
+                    player.setResourcePack(ip, hash);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+            finished = true;
         }).start();
-        finished = true;
+    }
+
+    private String generateRandomUUID() {
+        return UUID.randomUUID().toString();
     }
 
     private byte[] createHash(final File file) throws Exception {
@@ -171,7 +184,8 @@ public class MusicTrackPlayer implements Listener {
 
     private void createEmptyZipFile(final VideoResource v) throws IOException {
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
-                plugin.getDataFolder().getAbsolutePath() + "/resourcepack.zip"));
+                plugin.getDataFolder().getAbsolutePath() + "/" + uuid + ".zip"));
+
         byte[] mcmeta = ("{\r\n" + "	\"pack\": {\r\n" + "    \"pack_format\": 6,\r\n"
                 + "    \"description\": \"Custom Server Resourcepack for MinecraftVideo\"\r\n" + "  }\r\n" + "}")
                 .getBytes();

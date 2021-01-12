@@ -11,7 +11,10 @@ public class MusicCommandCompleter implements TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
-        return Arrays.asList("load", "play", "stop");
+        if (args.length <= 1) {
+            return Arrays.asList("load", "play", "stop");
+        }
+        return null;
     }
 
 }
