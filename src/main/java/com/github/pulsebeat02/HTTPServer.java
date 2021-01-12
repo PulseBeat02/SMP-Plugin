@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  * https://resources.oreilly.com/examples/9780596002855/blob/master/CD-ROM/examples/ch12/TinyHttpd.java
  * A mini http daemon intended to serve client resource pack requests.
  *
- * @author BananaPuncher714
+ * @author PulseBeat_02
  */
 public class HTTPServer extends Thread {
 
