@@ -28,6 +28,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -70,9 +71,7 @@ public class SMPPlugin extends JavaPlugin {
         long before = System.currentTimeMillis();
         writeConfig();
         saveConfig();
-        if (server != null && server.isAlive()) {
-            server.terminate();
-        }
+        stopHTTPServer();
         long after = System.currentTimeMillis();
         logger.info(ChatColor.YELLOW + "SMP Plugin has Shut Down (Took " + (after - before) + " Milliseconds)");
     }
@@ -187,6 +186,25 @@ public class SMPPlugin extends JavaPlugin {
         return sb.toString().trim();
     }
 
+    public void stopHTTPServer() {
+        if (server != null && server.isAlive()) {
+            server.terminate();
+        }
+    }
+
+    public void startHTTPServer() {
+        new Thread(() -> {
+            if (server == null) {
+                try {
+                    server = new HTTPServer(this, port);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                server.start();
+            }
+        }).start();
+    }
+
     public Map<UUID, PlayerStatus> getStatus() {
         return status;
     }
@@ -200,10 +218,6 @@ public class SMPPlugin extends JavaPlugin {
     }
 
     public HTTPServer getHTTPServer() { return server; }
-
-    public void setHttpServer(final HTTPServer server) {
-        this.server = server;
-    }
 
     public int getPort() { return port; }
 

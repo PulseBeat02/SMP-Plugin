@@ -54,16 +54,7 @@ public class MusicTrackPlayer implements Listener {
     public void loadMusic(final CommandSender sender, final String url) {
         stopMusic(sender);
         uuid = generateRandomUUID();
-        new Thread(() -> {
-            if (plugin.getHTTPServer() == null) {
-                try {
-                    plugin.setHttpServer(new HTTPServer(plugin, plugin.getPort()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                plugin.getHTTPServer().start();
-            }
-        }).start();
+        plugin.startHTTPServer();
         new Thread(() -> {
             for (File f : Objects.requireNonNull(plugin.getDataFolder().listFiles())) {
                 if (f.getName().endsWith(".zip")) {
@@ -95,7 +86,7 @@ public class MusicTrackPlayer implements Listener {
                 player.sendMessage(plugin.formatMessage(ChatColor.AQUA + "Sending Music Pack"));
                 try {
                     player.setResourcePack(ip, createHash(new File(getResourcepackPath())));
-                } catch (Exception e) {R
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

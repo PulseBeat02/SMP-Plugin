@@ -35,9 +35,7 @@ public class MusicCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.AQUA + "Rating: " + ChatColor.LIGHT_PURPLE + details.averageRating());
                 sender.sendMessage(ChatColor.GOLD + "=====================================");
             }
-            return true;
-        }
-        if (args.length == 1) {
+        } else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("stop")) {
                 track.stopMusic(sender);
             } else if (args[0].equalsIgnoreCase("play")) {
@@ -48,9 +46,7 @@ public class MusicCommandExecutor implements CommandExecutor {
                     sender.sendMessage(plugin.formatMessage(ChatColor.RED + "Waiting for Audio to Parse!"));
                 }
             }
-            return true;
-        }
-        if (args.length == 2) {
+        } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("load")) {
                 try {
                     sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Attempting to Load Track..."));
@@ -59,8 +55,24 @@ public class MusicCommandExecutor implements CommandExecutor {
                     sender.sendMessage(plugin.formatMessage(ChatColor.RED + "An Exception has Occurred"));
                     e.printStackTrace();
                 }
+            } else if (args[0].equalsIgnoreCase("server")) {
+                boolean alive = plugin.getHTTPServer().isAlive();
+                if (args[1].equalsIgnoreCase("start")) {
+                    if (alive) {
+                        sender.sendMessage(plugin.formatMessage(ChatColor.RED + "The HTTP Server has Already Started!"));
+                    } else {
+                        plugin.startHTTPServer();
+                        sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Starting the HTTP Server..."));
+                    }
+                } else if (args[1].equalsIgnoreCase("stop")) {
+                    if (!alive) {
+                        sender.sendMessage(plugin.formatMessage(ChatColor.RED + "The HTTP Server has Already Stopped!"));
+                    } else {
+                        plugin.stopHTTPServer();
+                        sender.sendMessage(plugin.formatMessage(ChatColor.GOLD + "Stopping the HTTP Server..."));
+                    }
+                }
             }
-            return true;
         }
         return true;
     }
