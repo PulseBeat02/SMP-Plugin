@@ -1,7 +1,5 @@
 package com.github.pulsebeat02;
 
-import com.github.kiulian.downloader.model.VideoDetails;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -101,48 +99,50 @@ public class HTTPServer extends Thread {
                 OutputStream out = client.getOutputStream();
                 PrintWriter pout = new PrintWriter(new OutputStreamWriter(out, "8859_1"), true);
                 String request = in.readLine();
-                System.out.println("Recieved request '" + request + "' from " + client.getInetAddress().toString());
-                Matcher get = Pattern.compile("GET /?(\\S*).*").matcher(request);
-                if (get.matches()) {
-                    request = get.group(1);
-                    File result = requestFileCallback(request);
-                    if (result == null) {
-                        pout.println("HTTP/1.0 400 Bad Request");
-                    } else {
-                        System.out.println("Request '" + request + "' is being served to " + client.getInetAddress());
-                        try {
-                            Calendar c = Calendar.getInstance();
-                            SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
-                            String GMTSTRING = df.format(c.getTime()) + " GMT";
-                            out.write("HTTP/1.0 200 OK\r\n".getBytes());
-                            out.write("Content-Type: application/zip\r\n".getBytes());
-                            out.write(("Content-Length: " + result.length() + "\r\n").getBytes());
-                            out.write(("Date: " + GMTSTRING + "\r\n").getBytes());
-                            out.write("Server: MineHttpd\r\n\r\n".getBytes());
-                            FileInputStream fis = new FileInputStream(result);
-                            byte[] data = new byte[64 * 1024];
-                            for (int read; (read = fis.read(data)) > -1; ) {
-                                out.write(data, 0, read);
-                            }
-                            out.flush();
-                            fis.close();
-                            System.out.println("Successfully served '" + request + "' to " + client.getInetAddress());
-                        } catch (FileNotFoundException e) {
-                            pout.println("HTTP/1.0 404 Object Not Found");
-                        }
-                    }
+                System.out.println("========================================");
+                System.out.println("Received Request '" + request + "' from " + client.getInetAddress().toString());
+                if (request == null) {
+                    System.out.println("Invalid Request (Null or Empty)");
                 } else {
-                    pout.println("HTTP/1.0 400 Bad Request");
+                    Matcher get = Pattern.compile("GET /?(\\S*).*").matcher(request);
+                    if (get.matches()) {
+                        request = get.group(1);
+                        File result = requestFileCallback(request);
+                        if (result == null) {
+                            pout.println("HTTP/1.0 400 Bad Request");
+                        } else {
+                            System.out.println("Request '" + request + "' is being served to " + client.getInetAddress());
+                            try {
+                                Calendar c = Calendar.getInstance();
+                                SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+                                String GMTSTRING = df.format(c.getTime()) + " GMT";
+                                out.write("HTTP/1.0 200 OK\r\n".getBytes());
+                                out.write("Content-Type: application/zip\r\n".getBytes());
+                                out.write(("Content-Length: " + result.length() + "\r\n").getBytes());
+                                out.write(("Date: " + GMTSTRING + "\r\n").getBytes());
+                                out.write("Server: HTTPServer\r\n\r\n".getBytes());
+                                FileInputStream fis = new FileInputStream(result);
+                                byte[] data = new byte[64 * 1024];
+                                for (int read; (read = fis.read(data)) > -1; ) {
+                                    out.write(data, 0, read);
+                                }
+                                out.flush();
+                                fis.close();
+                                System.out.println("Successfully served '" + request + "' to " + client.getInetAddress());
+                            } catch (FileNotFoundException e) {
+                                pout.println("HTTP/1.0 404 Object Not Found");
+                            }
+                        }
+                    } else {
+                        pout.println("HTTP/1.0 400 Bad Request");
+                    }
+                    client.close();
                 }
-                client.close();
+                System.out.println("========================================");
             } catch (IOException e) {
                 System.out.println("I/O error " + e);
             }
         }
-    }
-
-    public boolean isRunning() {
-        return running;
     }
 
 }

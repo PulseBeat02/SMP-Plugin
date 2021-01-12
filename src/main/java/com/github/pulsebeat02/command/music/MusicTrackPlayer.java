@@ -67,7 +67,11 @@ public class MusicTrackPlayer implements Listener {
         new Thread(() -> {
             for (File f : Objects.requireNonNull(plugin.getDataFolder().listFiles())) {
                 if (f.getName().endsWith(".zip")) {
-                    f.delete();
+                    if (f.delete()) {
+                        System.out.println("File: " + f.getName() + " was deleted");
+                    } else {
+                        System.out.println("File: " + f.getName() + " could not be deleted");
+                    }
                 }
             }
         }).start();
@@ -88,16 +92,19 @@ public class MusicTrackPlayer implements Listener {
             }
             String ip = "http://" + plugin.getServer().getIp() + ":" + plugin.getPort() + "/" + uuid + ".zip";
             for (Player player : Bukkit.getOnlinePlayers()) {
-                player.sendMessage(ChatColor.AQUA + "Sending Resourcepack...");
+                player.sendMessage(plugin.formatMessage(ChatColor.AQUA + "Sending Music Pack"));
                 try {
-                    byte[] hash = createHash(new File(plugin.getDataFolder().getAbsolutePath() + "/" + uuid + ".zip"));
-                    player.setResourcePack(ip, hash);
-                } catch (Exception e) {
+                    player.setResourcePack(ip, createHash(new File(getResourcepackPath())));
+                } catch (Exception e) {R
                     e.printStackTrace();
                 }
             }
             finished = true;
         }).start();
+    }
+
+    private String getResourcepackPath() {
+        return plugin.getDataFolder().getAbsolutePath() + "/" + uuid + ".zip";
     }
 
     private String generateRandomUUID() {
@@ -183,8 +190,7 @@ public class MusicTrackPlayer implements Listener {
     }
 
     private void createEmptyZipFile(final VideoResource v) throws IOException {
-        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
-                plugin.getDataFolder().getAbsolutePath() + "/" + uuid + ".zip"));
+        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(getResourcepackPath()));
 
         byte[] mcmeta = ("{\r\n" + "	\"pack\": {\r\n" + "    \"pack_format\": 6,\r\n"
                 + "    \"description\": \"Custom Server Resourcepack for MinecraftVideo\"\r\n" + "  }\r\n" + "}")
