@@ -184,7 +184,6 @@ public class MusicTrackPlayer implements Listener {
 
     private void createEmptyZipFile(final VideoResource v) throws IOException {
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(getResourcepackPath()));
-
         byte[] mcmeta = ("{\r\n" + "	\"pack\": {\r\n" + "    \"pack_format\": 6,\r\n"
                 + "    \"description\": \"Custom Server Resourcepack for MinecraftVideo\"\r\n" + "  }\r\n" + "}")
                 .getBytes();

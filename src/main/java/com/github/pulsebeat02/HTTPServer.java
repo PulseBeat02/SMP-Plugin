@@ -120,7 +120,8 @@ public class HTTPServer extends Thread {
                                 out.write("Content-Type: application/zip\r\n".getBytes());
                                 out.write(("Content-Length: " + result.length() + "\r\n").getBytes());
                                 out.write(("Date: " + GMTSTRING + "\r\n").getBytes());
-                                out.write("Server: HTTPServer\r\n\r\n".getBytes());
+                                out.write("Server: HTTPServer\r\n".getBytes());
+                                out.write("User-Agent: HTTPServer/1.0.0 (Music Pack Hosting)\r\n\r\n".getBytes());
                                 FileInputStream fis = new FileInputStream(result);
                                 byte[] data = new byte[64 * 1024];
                                 for (int read; (read = fis.read(data)) > -1; ) {
