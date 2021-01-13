@@ -99,7 +99,7 @@ public class HTTPServer extends Thread {
                 OutputStream out = client.getOutputStream();
                 PrintWriter pout = new PrintWriter(new OutputStreamWriter(out, "8859_1"), true);
                 String request = in.readLine();
-                System.out.println("========================================");
+                System.out.println("====================================================================================");
                 System.out.println("Received Request '" + request + "' from " + client.getInetAddress().toString());
                 if (request == null) {
                     System.out.println("Invalid Request (Null or Empty)");
@@ -138,7 +138,7 @@ public class HTTPServer extends Thread {
                     }
                     client.close();
                 }
-                System.out.println("========================================");
+                System.out.println("====================================================================================");
             } catch (IOException e) {
                 System.out.println("I/O error " + e);
             }

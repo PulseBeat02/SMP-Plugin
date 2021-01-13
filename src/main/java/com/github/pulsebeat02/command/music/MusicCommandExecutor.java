@@ -56,7 +56,7 @@ public class MusicCommandExecutor implements CommandExecutor {
                     e.printStackTrace();
                 }
             } else if (args[0].equalsIgnoreCase("server")) {
-                boolean alive = plugin.getHTTPServer().isAlive();
+                boolean alive = plugin.getHTTPServer() == null;
                 if (args[1].equalsIgnoreCase("start")) {
                     if (alive) {
                         sender.sendMessage(plugin.formatMessage(ChatColor.RED + "The HTTP Server has Already Started!"));

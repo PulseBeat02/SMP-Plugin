@@ -192,9 +192,10 @@ public class SMPPlugin extends JavaPlugin {
         }
     }
 
-    public void startHTTPServer() {
+    public boolean startHTTPServer() {
+        boolean status = server == null;
         new Thread(() -> {
-            if (server == null) {
+            if (status) {
                 try {
                     server = new HTTPServer(this, port);
                 } catch (IOException e) {
@@ -203,6 +204,7 @@ public class SMPPlugin extends JavaPlugin {
                 server.start();
             }
         }).start();
+        return status;
     }
 
     public Map<UUID, PlayerStatus> getStatus() {

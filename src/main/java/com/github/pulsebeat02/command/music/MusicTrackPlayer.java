@@ -52,9 +52,10 @@ public class MusicTrackPlayer implements Listener {
     }
 
     public void loadMusic(final CommandSender sender, final String url) {
-        stopMusic(sender);
         uuid = generateRandomUUID();
-        plugin.startHTTPServer();
+        if (!plugin.startHTTPServer()) {
+            stopMusic(sender);
+        }
         new Thread(() -> {
             for (File f : Objects.requireNonNull(plugin.getDataFolder().listFiles())) {
                 if (f.getName().endsWith(".zip")) {
@@ -82,6 +83,7 @@ public class MusicTrackPlayer implements Listener {
                 e.printStackTrace();
             }
             String ip = "http://" + plugin.getServer().getIp() + ":" + plugin.getPort() + "/" + uuid + ".zip";
+            System.out.println(ip);
             for (Player player : Bukkit.getOnlinePlayers()) {
                 player.sendMessage(plugin.formatMessage(ChatColor.AQUA + "Sending Music Pack"));
                 try {
