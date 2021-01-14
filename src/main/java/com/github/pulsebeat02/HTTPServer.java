@@ -117,7 +117,7 @@ public class HTTPServer extends Thread {
                                 SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
                                 String GMTSTRING = df.format(c.getTime()) + " GMT";
                                 out.write("HTTP/1.0 200 OK\r\n".getBytes());
-                                out.write("Content-Type: application/zip\r\n".getBytes());
+                                out.write("Content-Type: application/octet-stream\r\n".getBytes());
                                 out.write(("Content-Length: " + result.length() + "\r\n").getBytes());
                                 out.write(("Date: " + GMTSTRING + "\r\n").getBytes());
                                 out.write("Server: HTTPServer\r\n".getBytes());
